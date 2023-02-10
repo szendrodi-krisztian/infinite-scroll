@@ -1,0 +1,19 @@
+{
+    "name": "RabbitScroll.Tests",
+    "rootNamespace": "Rabbit.UI",
+    "references": [
+        "GUID:728a1a8308213b04a88f88ac996babfa",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
