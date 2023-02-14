@@ -1,4 +1,6 @@
+using System.Linq;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace Rabbit.UI
 {
@@ -46,7 +48,7 @@ namespace Rabbit.UI
         {
             for (var i = 0; i < samples.Length; i++)
             {
-                list.Add(samples[i]);
+                list.AddLast(samples[i]);
             }
         }
 
@@ -76,7 +78,7 @@ namespace Rabbit.UI
 
                 Assert.IsTrue(i < removeIndex ? isSame : isSameAsNext);
             }
-            
+
             Assert.IsTrue(list.Count == samples.Length - 1);
         }
 
@@ -102,9 +104,9 @@ namespace Rabbit.UI
 
             for (int i = 0; i < l; i++)
             {
-                list.Add(1);
-                list.Add(2);
-                list.Add(3);
+                list.AddLast(1);
+                list.AddLast(2);
+                list.AddLast(3);
             }
 
             Assert.IsTrue(list.Count == l * 3);
@@ -123,6 +125,123 @@ namespace Rabbit.UI
             Assert.IsTrue(list[1] == 3);
             Assert.IsTrue(list[2] == 1);
             Assert.IsTrue(list[3] == 3);
+        }
+
+        [Test]
+        public void Is_Indexing_Correct_After_RemoveAt()
+        {
+            var list = new SegmentedLinkedList<int>(5);
+            for (var i = 0; i < 17; i++)
+            {
+                list.AddLast(i);
+            }
+
+            var segments = list.Segments.Select(x => x.StartIndex).ToArray();
+            var expected = new[] { 0, 5, 10, 15 };
+
+            for (var i = 0; i < segments.Length; i++)
+            {
+                Assert.IsTrue(expected[i] == segments[i]);
+            }
+
+            list.RemoveAt(2);
+
+            segments = list.Segments.Select(x => x.StartIndex).ToArray();
+            expected = new[] { 0, 4, 9, 14 };
+            for (var i = 0; i < segments.Length; i++)
+            {
+                Assert.IsTrue(expected[i] == segments[i]);
+            }
+        }
+
+        [Test]
+        public void Is_Indexing_Correct_After_RemoveAll1()
+        {
+            var list = new SegmentedLinkedList<int>(5);
+            for (var i = 0; i < 17; i++)
+            {
+                list.AddLast(i / 2);
+            }
+
+            var segments = list.Segments.Select(x => x.StartIndex).ToArray();
+            var expected = new[] { 0, 5, 10, 15 };
+
+            for (var i = 0; i < segments.Length; i++)
+            {
+                Assert.IsTrue(expected[i] == segments[i]);
+            }
+
+            list.Remove(1);
+
+            segments = list.Segments.Select(x => x.StartIndex).ToArray();
+            expected = new[] { 0, 3, 8, 13 };
+            for (var i = 0; i < segments.Length; i++)
+            {
+                Assert.IsTrue(expected[i] == segments[i]);
+            }
+        }
+
+        [Test]
+        public void Is_Indexing_Correct_After_RemoveAll2()
+        {
+            var list = new SegmentedLinkedList<int>(5);
+            for (var i = 0; i < 17; i++)
+            {
+                list.AddLast(i / 2);
+            }
+
+            var segments = list.Segments.Select(x => x.StartIndex).ToArray();
+            var expected = new[] { 0, 5, 10, 15 };
+
+            for (var i = 0; i < segments.Length; i++)
+            {
+                Assert.IsTrue(expected[i] == segments[i]);
+            }
+
+            list.Remove(2);
+
+            segments = list.Segments.Select(x => x.StartIndex).ToArray();
+            expected = new[] { 0, 4, 8, 13 };
+            for (var i = 0; i < segments.Length; i++)
+            {
+                Assert.IsTrue(expected[i] == segments[i]);
+            }
+        }
+
+        [Test]
+        public void AddRange_Works()
+        {
+            var list = new SegmentedLinkedList<int>(2);
+
+            var expected = new[] { 0, 5, 10, 15 };
+
+            list.AddRange(expected);
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                Assert.IsTrue(expected[i] == list[i]);
+            }
+        }
+
+        [Test]
+        public void Append_Works()
+        {
+            var list1 = new SegmentedLinkedList<int>(2);
+            var expected1 = new[] { 0, 5, 10, 15 };
+            list1.AddRange(expected1);
+
+            var list2 = new SegmentedLinkedList<int>(2);
+            var expected2 = new[] { 1, 3, 8, 27 };
+            list2.AddRange(expected2);
+
+            list1.AppendList(list2);
+
+            var expected = new[] { 0, 5, 10, 15, 1, 3, 8, 27 };
+
+            for (var i = 0; i < list1.Count; i++)
+            {
+                Assert.IsTrue(expected[i] == list1[i]);
+            }
         }
     }
 }

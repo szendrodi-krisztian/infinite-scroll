@@ -11,18 +11,54 @@ namespace Rabbit.UI
         private int nodeCapacity;
         private int nodeCount;
 
+        private int startIndex;
+
         private SegmentedLinkedList<T> nextNode;
+        private SegmentedLinkedList<T> prevNode;
 
         private const int DefaultNodeCapacity = 64;
+        public int StartIndex => startIndex;
+        public int Count => nodeCount + (nextNode?.Count ?? 0);
+        public bool IsReadOnly => false;
 
-        public SegmentedLinkedList(int nodeCapacity = DefaultNodeCapacity)
+        public SegmentedLinkedList<T> NextNode
+        {
+            get => nextNode;
+            set => nextNode = value;
+        }
+
+        public SegmentedLinkedList<T> PrevNode
+        {
+            get => prevNode;
+            set => prevNode = value;
+        }
+
+        public SegmentedLinkedList(int nodeCapacity = DefaultNodeCapacity, int startIndex = 0,
+            SegmentedLinkedList<T> prevNode = null)
         {
             this.nodeCapacity = nodeCapacity;
             nodeCount = 0;
             data = new T[nodeCapacity];
+            this.startIndex = startIndex;
+            this.prevNode = prevNode;
         }
 
-        public void Add(T newElement)
+        public void AddRange(IEnumerable<T> elements)
+        {
+            if (nodeCount == nodeCapacity)
+            {
+                AddRange(elements);
+            }
+            else
+            {
+                foreach (var e in elements)
+                {
+                    AddLast(e);
+                }
+            }
+        }
+
+        public void AddLast(T newElement)
         {
             if (nodeCount == nodeCapacity)
             {
@@ -33,6 +69,23 @@ namespace Rabbit.UI
                 data[nodeCount++] = newElement;
             }
         }
+
+        public IEnumerable<SegmentedLinkedList<T>> Segments
+        {
+            get
+            {
+                yield return this;
+                if (nextNode != null)
+                {
+                    foreach (var segment in nextNode.Segments)
+                    {
+                        yield return segment;
+                    }
+                }
+            }
+        }
+
+        public void Add(T item) => AddLast(item);
 
         public void Clear()
         {
@@ -85,25 +138,25 @@ namespace Rabbit.UI
             nodeCapacity = reAllocated.Length;
             nodeCount = nodeCount - countInThis;
 
+            SetStartIndex(startIndex);
+
             return true;
         }
 
-        public int Count => nodeCount + (nextNode?.Count ?? 0);
-
-        public bool IsReadOnly => false;
-
         private void AddToNextNode(T newElement)
         {
-            nextNode ??= new SegmentedLinkedList<T>(nodeCapacity);
-            nextNode.Add(newElement);
+            nextNode ??= new SegmentedLinkedList<T>(nodeCapacity, startIndex + nodeCapacity, this);
+            nextNode.AddLast(newElement);
         }
 
         public T ElementAt(int index)
         {
-            if (index >= nodeCapacity)
-                return nextNode.ElementAt(index - nodeCapacity);
+            if (index >= startIndex + nodeCapacity)
+                return nextNode.ElementAt(index);
+            if (index < startIndex)
+                return prevNode.ElementAt(index);
             else
-                return data[index];
+                return data[index - startIndex];
         }
 
         public void RemoveAt(int index)
@@ -126,7 +179,15 @@ namespace Rabbit.UI
                 nodeCapacity = reallocatedData.Length;
                 data = reallocatedData;
                 nodeCount -= 1;
+
+                SetStartIndex(startIndex);
             }
+        }
+
+        private void SetStartIndex(int newStartIndex)
+        {
+            startIndex = newStartIndex;
+            nextNode?.SetStartIndex(startIndex + nodeCapacity);
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -151,5 +212,19 @@ namespace Rabbit.UI
         }
 
         public T this[int i] => ElementAt(i);
+
+        public void AppendList(SegmentedLinkedList<T> added)
+        {
+            if (nextNode == null)
+            {
+                nextNode = added;
+                added.prevNode = this;
+                SetStartIndex(startIndex);
+            }
+            else
+            {
+                nextNode.AppendList(added);
+            }
+        }
     }
 }
