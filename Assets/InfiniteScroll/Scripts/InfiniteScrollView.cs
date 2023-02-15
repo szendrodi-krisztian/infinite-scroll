@@ -22,15 +22,15 @@ namespace Rabbit.UI
         [SerializeField] private List<InfiniteScrollViewElement> activeElements;
 
         private ObjectPool<InfiniteScrollViewElement> pool;
-        
+
         private InfiniteSegmentedLinkedList<int> data;
-        
+
         [SerializeField] private int pressedPointerCount;
         private bool isDragging => pressedPointerCount == 1;
 
         private void Awake()
         {
-            data = new InfiniteSegmentedLinkedList<int>(new MockSegmentLoader());
+            data = new InfiniteSegmentedLinkedList<int>(gameObject.AddComponent<MockAsyncSegmentLoader>());
             pool = new ObjectPool<InfiniteScrollViewElement>(
                 createFunc: () => Instantiate(elementPrefab, listParent),
                 actionOnGet: e => e.OnPoolGet(),
@@ -55,13 +55,11 @@ namespace Rabbit.UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            Debug.Log("Pointer down");
             pressedPointerCount++;
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            Debug.Log("Pointer up");
             pressedPointerCount--;
         }
 
@@ -94,7 +92,7 @@ namespace Rabbit.UI
                 }
 
                 // top element goes downward
-                if (topElement.RectTransform.localPosition.y < topAppearLimit)
+                if (topElement.RectTransform.localPosition.y < topAppearLimit && topElement.ElementIndex > 0)
                 {
                     var newTopElement = pool.Get();
                     newTopElement.ElementIndex = topElement.ElementIndex - 1;
@@ -112,7 +110,7 @@ namespace Rabbit.UI
                 }
 
                 // bottom goes upwards
-                if (bottomElement.RectTransform.localPosition.y > bottomAppearLimit)
+                if (bottomElement.RectTransform.localPosition.y > bottomAppearLimit && bottomElement.ElementIndex < data.Count)
                 {
                     var newBottomElement = pool.Get();
                     newBottomElement.ElementIndex = bottomElement.ElementIndex + 1;
@@ -153,7 +151,6 @@ namespace Rabbit.UI
 
         public void OnScroll(PointerEventData eventData)
         {
-            Debug.Log("Scroll");
         }
     }
 }

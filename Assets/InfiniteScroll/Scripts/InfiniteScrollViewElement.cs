@@ -42,6 +42,11 @@ namespace Rabbit.UI
         public void UpdateDisplay(InfiniteSegmentedLinkedList<int> data)
         {
             label.text = $"dynamic: index:{elementIndex}";
+            var future = data.ElementAt(elementIndex);
+            future.WhenComplete(() =>
+            {
+                label.text = $"loaded content:{future.Reference}";
+            });
         }
     }
 }

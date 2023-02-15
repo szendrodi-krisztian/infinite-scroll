@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using UnityEngine;
 
 namespace Rabbit.UI
 {
@@ -7,14 +8,14 @@ namespace Rabbit.UI
         [Test]
         public void Can_Be_Created()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSegmentLoader());
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader());
             Assert.True(list != null);
         }
 
         [Test]
         public void Is_Add_Get_Good()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSegmentLoader(), 2);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), 2);
             Assert.True(list != null);
 
             var expected = new[]
@@ -33,7 +34,7 @@ namespace Rabbit.UI
         [Test]
         public void Is_Loading_Good()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSegmentLoader(), 2);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), 2);
             Assert.True(list != null);
 
             var expected = new[]
@@ -50,7 +51,7 @@ namespace Rabbit.UI
         [Test]
         public void Is_Loading_Good_With_Max_Count()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSegmentLoader(), 2, 5);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), 2, 5);
             Assert.True(list != null);
 
             var expected = new[]

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -241,6 +242,70 @@ namespace Rabbit.UI
             for (var i = 0; i < list1.Count; i++)
             {
                 Assert.IsTrue(expected[i] == list1[i]);
+            }
+        }
+
+        [Test]
+        public void Insert_Works1()
+        {
+            InsertTest(1);
+        }
+
+        [Test]
+        public void Insert_Works2()
+        {
+            InsertTest(4);
+        }
+
+        [Test]
+        public void Insert_Works3()
+        {
+            InsertTest(5);
+        }
+        
+        [Test]
+        public void Insert_Works4()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                InsertTest(i);
+            }
+        }
+
+        private static void InsertTest(int insertionIndex)
+        {
+            var list = new SegmentedLinkedList<int>(3);
+
+            var initial = new[]
+            {
+                0, 5, 10,
+                15, 42, 206,
+                78, 54, 25,
+                988, 45, 72,
+                9
+            };
+
+            list.AddRange(initial);
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                Assert.IsTrue(initial[i] == list[i]);
+            }
+
+            var ins = 9999999;
+
+            list.Insert(insertionIndex, ins);
+
+            var expected = initial.ToList();
+            while (expected.Count < insertionIndex)
+            {
+                expected.Add(0);
+            }
+            expected.Insert(insertionIndex, ins);
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                Assert.IsTrue(expected[i] == list[i]);
             }
         }
     }

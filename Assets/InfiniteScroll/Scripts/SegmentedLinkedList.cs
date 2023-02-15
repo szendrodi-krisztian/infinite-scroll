@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Rabbit.UI
 {
@@ -41,6 +42,58 @@ namespace Rabbit.UI
             data = new T[nodeCapacity];
             this.startIndex = startIndex;
             this.prevNode = prevNode;
+        }
+
+        public void Insert(int index, T element)
+        {
+            if (index < startIndex)
+            {
+                CreatePrevNodeIfNeeded();
+                prevNode.Insert(index, element);
+            }
+            else if (index > startIndex + nodeCapacity - 1)
+            {
+                CreateNextNodeIfNeeded();
+                nextNode.Insert(index, element);
+            }
+            else
+            {
+                if (nodeCount < nodeCapacity)
+                {
+                    var list = data.ToList();
+                    list.Insert(index - startIndex, element);
+                    data = list.ToArray();
+                }
+                else
+                {
+                    var list = data.ToList();
+                    list.Insert(index - startIndex, element);
+                    data = list.SkipLast(1).ToArray();
+                    if (nextNode == null)
+                    {
+                        AddToNextNode(list.Last());
+                    }
+                    else
+                    {
+                        nextNode.ShiftForward(list.Last());
+                    }
+                }
+            }
+        }
+
+        private void ShiftForward(T newFirst)
+        {
+            var list = data.ToList();
+            list.Insert(0, newFirst);
+            data = list.SkipLast(1).ToArray();
+            if (nextNode == null)
+            {
+                AddToNextNode(list.Last());
+            }
+            else
+            {
+                nextNode.ShiftForward(list.Last());
+            }
         }
 
         public void AddRange(IEnumerable<T> elements)
@@ -145,18 +198,40 @@ namespace Rabbit.UI
 
         private void AddToNextNode(T newElement)
         {
-            nextNode ??= new SegmentedLinkedList<T>(nodeCapacity, startIndex + nodeCapacity, this);
+            CreateNextNodeIfNeeded();
             nextNode.AddLast(newElement);
+        }
+
+        private void CreateNextNodeIfNeeded()
+        {
+            nextNode ??= new SegmentedLinkedList<T>(nodeCapacity, startIndex + nodeCapacity, this);
+        }
+
+        private void CreatePrevNodeIfNeeded()
+        {
+            if (prevNode == null)
+            {
+                prevNode = new SegmentedLinkedList<T>(nodeCapacity, startIndex - nodeCapacity);
+                prevNode.AppendList(this);
+            }
         }
 
         public T ElementAt(int index)
         {
             if (index >= startIndex + nodeCapacity)
+            {
+                CreateNextNodeIfNeeded();
                 return nextNode.ElementAt(index);
-            if (index < startIndex)
+            }
+            else if (index < startIndex)
+            {
+                CreatePrevNodeIfNeeded();
                 return prevNode.ElementAt(index);
+            }
             else
+            {
                 return data[index - startIndex];
+            }
         }
 
         public void RemoveAt(int index)
@@ -224,6 +299,26 @@ namespace Rabbit.UI
             else
             {
                 nextNode.AppendList(added);
+            }
+        }
+
+        public void SetElementAt(int idx, T element)
+        {
+            if (idx > startIndex + nodeCapacity - 1)
+            {
+                CreateNextNodeIfNeeded();
+                nextNode.SetElementAt(idx, element);
+            }
+
+            else if (idx < startIndex)
+            {
+                CreatePrevNodeIfNeeded();
+                prevNode.SetElementAt(idx, element);
+            }
+            else
+            {
+                data[idx - startIndex] = element;
+                nodeCount = Mathf.Max(idx, nodeCount);
             }
         }
     }
