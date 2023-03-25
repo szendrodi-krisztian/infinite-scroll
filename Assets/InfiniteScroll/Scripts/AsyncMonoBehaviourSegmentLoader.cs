@@ -23,7 +23,8 @@ namespace Rabbit.UI
 
         private readonly List<ElementLoadResult> loaded = new();
 
-        protected abstract T LoadOnThread(int idx);
+        protected abstract void LoadOnThread(int idx);
+        protected abstract bool UseRealThread { get; }
 
         public void LoadElement(int index, Action<int, T> onElementDone)
         {
@@ -36,7 +37,14 @@ namespace Rabbit.UI
                 else
                 {
                     indexMemoizeMap[index] = onElementDone;
-                    ThreadPool.QueueUserWorkItem(LoadSegmentThreaded, index);
+                    if (UseRealThread)
+                    {
+                        ThreadPool.QueueUserWorkItem(LoadSegmentThreaded, index);
+                    }
+                    else
+                    {
+                        LoadSegmentThreaded(index);
+                    }
                 }
             }
             Monitor.Exit(this);
@@ -44,7 +52,7 @@ namespace Rabbit.UI
 
         public abstract int TotalCount { get; }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (!Monitor.TryEnter(this)) return;
             {
@@ -63,8 +71,11 @@ namespace Rabbit.UI
         {
             var idx = (int)state;
 
-            var result = LoadOnThread(idx);
+            LoadOnThread(idx);
+        }
 
+        protected void OnElementLoaded(int idx, T result)
+        {
             Monitor.Enter(this);
             {
                 loaded.Add(new ElementLoadResult(idx, result));

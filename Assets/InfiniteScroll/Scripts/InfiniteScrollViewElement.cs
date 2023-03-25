@@ -1,13 +1,11 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public class InfiniteScrollViewElement : MonoBehaviour
+    public abstract class InfiniteScrollViewElement<T> : MonoBehaviour
     {
-        [SerializeField] private TMP_Text label;
-        [SerializeField] private float elementHeight;
-        [SerializeField] private int elementIndex;
+        [SerializeField] protected float elementHeight;
+        [SerializeField] protected int elementIndex;
 
         public RectTransform RectTransform { get; private set; }
 
@@ -19,17 +17,17 @@ namespace Rabbit.UI
             set => elementIndex = value;
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             RectTransform = (RectTransform)transform;
         }
 
-        public void OnPoolGet()
+        public virtual void OnPoolGet()
         {
             gameObject.SetActive(true);
         }
 
-        public void OnPoolRelease()
+        public virtual void OnPoolRelease()
         {
             gameObject.SetActive(false);
         }
@@ -39,14 +37,19 @@ namespace Rabbit.UI
             RectTransform.position += new Vector3(0, delta, 0);
         }
 
-        public void UpdateDisplay(InfiniteSegmentedLinkedList<int> data)
+        public virtual void UpdateDisplay(InfiniteSegmentedLinkedList<T> data)
         {
-            label.text = $"dynamic: index:{elementIndex}";
-            var future = data.ElementAt(elementIndex);
-            future.WhenComplete(() =>
-            {
-                label.text = $"loaded content:{future.Reference}";
-            });
+        }
+
+        public float ClampStepSizeTop(float value)
+        {
+            return value;
+            return RectTransform.localPosition.y + value > 0 ? value : -RectTransform.localPosition.y;
+        }
+        
+        public float ClampStepSizeBottom(float value)
+        {
+            return RectTransform.localPosition.y + value > 0 ? value : -RectTransform.localPosition.y;
         }
     }
 }

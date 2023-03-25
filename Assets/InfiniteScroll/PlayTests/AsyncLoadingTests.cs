@@ -12,7 +12,7 @@ public class AsyncLoadingTests
     public IEnumerator AsyncLoadingTestsWithEnumeratorPasses()
     {
         var loader = new GameObject("Loader").AddComponent<MockAsyncSegmentLoader>();
-        var list = new InfiniteSegmentedLinkedList<int>(loader, 2, 5);
+        var list = new InfiniteSegmentedLinkedList<string>(loader, 2, 5);
         Assert.True(list != null);
 
         var expected = new[]
@@ -30,7 +30,7 @@ public class AsyncLoadingTests
 
         for (var i = 0; i < expected.Length; i++)
         {
-            Assert.IsTrue(list.ElementAt(i).Reference == expected[i]);
+            Assert.IsTrue(list.ElementAt(i).Reference == expected[i].ToString());
         }
 
         Object.Destroy(loader.gameObject);

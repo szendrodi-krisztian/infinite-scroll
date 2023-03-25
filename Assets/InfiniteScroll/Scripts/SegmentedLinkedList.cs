@@ -318,7 +318,7 @@ namespace Rabbit.UI
             else
             {
                 data[idx - startIndex] = element;
-                nodeCount = Mathf.Max(idx, nodeCount);
+                nodeCount = Mathf.Max(idx - startIndex + 1, nodeCount);
             }
         }
     }
