@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,15 +8,30 @@ namespace Rabbit.UI
     public abstract class SegmentedLinkedListBase<T, TImpl> where TImpl : SegmentedLinkedListBase<T, TImpl>, new()
     {
         protected const int DefaultNodeCapacity = 64;
-        private T[] data;
-        protected TImpl nextNode;
-        private int nodeCapacity;
-        protected int nodeCount;
-        protected TImpl prevNode;
-        protected int startIndex;
 
+        private T[] data;
+        private TImpl nextNode;
+        private int nodeCapacity;
+        private int nodeCount;
+        private TImpl prevNode;
+        private int startIndex;
+
+        protected TImpl NextNode => nextNode;
+        protected TImpl PrevNode => prevNode;
         protected bool IsNodeFull => nodeCount == nodeCapacity;
         public int Count => nodeCount + (nextNode?.Count ?? 0);
+        public int StartIndex => startIndex;
+
+        public bool HasIndex(int index)
+        {
+            if (IsIndexInPrevNode(index))
+                return prevNode?.HasIndex(index) == true;
+
+            if (IsIndexInNextNode(index))
+                return nextNode?.HasIndex(index) == true;
+
+            return !EqualityComparer<T>.Default.Equals(data[index - startIndex], y: default);
+        }
 
         protected TImpl Init(int newNodeCapacity = SegmentedLinkedListBase<T, TImpl>.DefaultNodeCapacity, int newStartIndex = 0, TImpl newPrevNode = null)
         {
@@ -30,6 +46,12 @@ namespace Rabbit.UI
 
         protected bool IsIndexInNextNode(int index) => index >= startIndex + nodeCapacity;
         protected bool IsIndexInPrevNode(int index) => index < startIndex;
+
+        public void Clear()
+        {
+            NextNode?.Clear();
+            nodeCount = 0;
+        }
 
         protected void CreateNextNodeIfNeeded() => nextNode ??= new TImpl().Init(nodeCapacity, startIndex + nodeCapacity, this as TImpl);
         protected void CreatePrevNodeIfNeeded()
@@ -73,14 +95,14 @@ namespace Rabbit.UI
                     nodeCount -= 1;
                 }
 
-                SetStartIndex(startIndex);
+                RebaseIndices(startIndex);
             }
         }
 
-        private void SetStartIndex(int newStartIndex)
+        private void RebaseIndices(int newStartIndex)
         {
             startIndex = newStartIndex;
-            nextNode?.SetStartIndex(startIndex + nodeCapacity);
+            nextNode?.RebaseIndices(startIndex + nodeCapacity);
         }
 
         public T ElementAt(int index)
@@ -123,8 +145,6 @@ namespace Rabbit.UI
         {
             var list = data.ToList();
 
-            Debug.Log($"insert index {index - startIndex} count {list.Count}");
-
             if (list.Count == 0)
                 list.Add(element);
             else
@@ -148,7 +168,7 @@ namespace Rabbit.UI
             {
                 nextNode = added;
                 added.prevNode = this as TImpl;
-                SetStartIndex(startIndex);
+                RebaseIndices(startIndex);
             }
             else
             {
@@ -181,7 +201,7 @@ namespace Rabbit.UI
             nodeCapacity = reAllocated.Length;
             nodeCount = nodeCount - countInThis;
 
-            SetStartIndex(startIndex);
+            RebaseIndices(startIndex);
 
             return true;
         }

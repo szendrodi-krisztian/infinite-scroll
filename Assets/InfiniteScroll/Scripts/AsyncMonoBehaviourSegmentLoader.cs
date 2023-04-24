@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 
@@ -7,34 +7,34 @@ namespace Rabbit.UI
 {
     public abstract class AsyncMonoBehaviourSegmentLoader<T> : MonoBehaviour, ISegmentLoader<T>
     {
-        private readonly Dictionary<int, Action<int, T>> indexMemoizeMap = new Dictionary<int, Action<int, T>>();
-
+        private readonly List<ISegmentConsumer<T>> consumers = new List<ISegmentConsumer<T>>();
         private readonly List<ElementLoadResult> loaded = new List<ElementLoadResult>();
         protected abstract bool UseRealThread { get; }
 
         public abstract int TotalCount { get; }
+        public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
-        public void LoadElement(int index, Action<int, T> onElementDone)
+        public void LoadElement(int index)
         {
             Monitor.Enter(this);
 
             {
-                if (indexMemoizeMap.ContainsKey(index))
+                for (var i = 0; i < consumers.Count; i++)
                 {
-                    indexMemoizeMap[index] += onElementDone;
+                    foreach (var consumer in consumers.Where(t => t != null))
+                    {
+                        consumer.OnSegmentLoading(index);
+                    }
+                }
+
+                if (UseRealThread)
+                {
+                    ThreadPool.QueueUserWorkItem(LoadSegmentThreaded, index);
                 }
                 else
                 {
-                    indexMemoizeMap[index] = onElementDone;
+                    LoadSegmentThreaded(index);
 
-                    if (UseRealThread)
-                    {
-                        ThreadPool.QueueUserWorkItem(LoadSegmentThreaded, index);
-                    }
-                    else
-                    {
-                        LoadSegmentThreaded(index);
-                    }
                 }
             }
 
@@ -49,8 +49,10 @@ namespace Rabbit.UI
             {
                 foreach (var l in loaded)
                 {
-                    indexMemoizeMap[l.index](l.index, l.result);
-                    indexMemoizeMap.Remove(l.index);
+                    foreach (var consumer in consumers.Where(t => t != null))
+                    {
+                        consumer.ConsumeSegment(l.index, l.result);
+                    }
                 }
 
                 loaded.Clear();

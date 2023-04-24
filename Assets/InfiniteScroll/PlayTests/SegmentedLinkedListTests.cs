@@ -1,7 +1,6 @@
+#undef SEGMENT_LOGS
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using UnityEngine;
 
 namespace Rabbit.UI
 {
@@ -28,19 +27,28 @@ namespace Rabbit.UI
             }
         }
 
-        private void AddSamples(SegmentedLinkedList<int> list)
+#if SEGMENT_LOGS
+        private static void AddSamples(SegmentedLinkedList<int> list)
         {
             var sb = new StringBuilder();
 
-            for (var i = 0; i < SegmentedLinkedListTestData.Samples.Length; i++)
+            foreach (var s in SegmentedLinkedListTestData.Samples)
             {
-                var s = SegmentedLinkedListTestData.Samples[i];
                 sb.Append($"{s} ");
                 list.AddLast(s);
             }
 
             Debug.Log(sb.ToString());
         }
+#else
+        private static void AddSamples(SegmentedLinkedList<int> list)
+        {
+            foreach (var s in SegmentedLinkedListTestData.Samples)
+            {
+                list.AddLast(s);
+            }
+        }
+#endif
 
         [Test]
         public void Can_Be_Removed_From()
@@ -58,11 +66,11 @@ namespace Rabbit.UI
         {
             var list = new SegmentedLinkedList<int>(capacity);
             AddSamples(list);
-
-            Debug.Log($"removeindex: {removeIndex} capacity: {capacity}");
-
+#if SEGMENT_LOGS
+            Debug.Log($"{nameof(removeIndex)}: {removeIndex} {nameof(capacity)}: {capacity}");
+#endif
             list.RemoveAt(removeIndex);
-
+#if SEGMENT_LOGS
             var sb = new StringBuilder();
 
             for (var i = 0; i < list.Count; i++)
@@ -74,7 +82,7 @@ namespace Rabbit.UI
             }
 
             Debug.Log(sb.ToString());
-
+#endif
             for (var i = 0; i < SegmentedLinkedListTestData.Samples.Length - 1; i++)
             {
                 var isSame = list.ElementAt(i) == SegmentedLinkedListTestData.Samples[i];

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Rabbit.UI
 {
-    public sealed class MockSyncSegmentLoader : ISegmentLoader<int>
+    public sealed class MockSyncSegmentLoaderWithPreloading : ISegmentLoader<int>
     {
         private readonly List<ISegmentConsumer<int>> consumers = new List<ISegmentConsumer<int>>();
         public int TotalCount => int.MaxValue;
@@ -12,7 +12,10 @@ namespace Rabbit.UI
         {
             foreach (var consumer in consumers.Where(t => t != null))
             {
-                consumer.ConsumeSegment(index, index);
+                for (var i = 0; i < 6; i++)
+                {
+                    consumer.ConsumeSegment(index + i, index + i);
+                }
             }
         }
 

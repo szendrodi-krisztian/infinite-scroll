@@ -1,55 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace Rabbit.UI
 {
-    public sealed class InfiniteSegmentedLinkedList<T>
+    public sealed class InfiniteSegmentedLinkedList<T> : ISegmentConsumer<T>
     {
-        private const int DefaultMaxLoadedElementCount = 100;
+        private readonly SegmentedLinkedList<Future<T>> data;
 
         private readonly ISegmentLoader<T> loader;
-        private readonly int maxLoadedElementCount;
-        private readonly int nodeCapacity;
-
-        private readonly SegmentedLinkedList<T> data;
 
         public int Count => loader.TotalCount;
 
-        public InfiniteSegmentedLinkedList(ISegmentLoader<T> loader, int nodeCapacity = 10, int maxLoadedElementCount = InfiniteSegmentedLinkedList<T>.DefaultMaxLoadedElementCount)
+        public InfiniteSegmentedLinkedList(ISegmentLoader<T> loader, int nodeCapacity = 10)
         {
             this.loader = loader;
-            this.nodeCapacity = nodeCapacity;
-            this.maxLoadedElementCount = maxLoadedElementCount;
-            data = new SegmentedLinkedList<T>(nodeCapacity);
+            data = new SegmentedLinkedList<Future<T>>(nodeCapacity);
+            loader.AddConsumer(this);
         }
 
-        public void AddRange(IEnumerable<T> source) => data.AddRange(source);
+        public void OnSegmentLoading(int index)
+        {
+            if (!data.HasIndex(index))
+            {
+                data[index] = new Future<T>();
+            }
+        }
+
+        public void ConsumeSegment(int index, T nextLoadedElement)
+        {
+            if (data.HasIndex(index))
+            {
+                data[index].Complete(nextLoadedElement);
+                return;
+            }
+
+            var future = new Future<T>();
+            future.Complete(nextLoadedElement);
+            data[index] = future;
+        }
 
         public Future<T> ElementAt(int index)
         {
-            var future = new Future<T>();
+            if (data.HasIndex(index))
+                return data[index];
 
-            if (index < data.StartIndex)
-            {
-                loader.LoadElement(index, onElementDone: (loadedIndex, loadedData) =>
-                {
-                    data.SetElementAt(loadedIndex, loadedData);
-                    future.Complete(data.ElementAt(index));
-                });
-            }
-            else if (index > data.StartIndex + data.Count - 1)
-            {
-                loader.LoadElement(index, onElementDone: (loadedIndex, loadedData) =>
-                {
-                    data.SetElementAt(loadedIndex, loadedData);
-                    future.Complete(data.ElementAt(index));
-                });
-            }
-            else
-            {
-                future.Complete(data.ElementAt(index));
-            }
+            loader.LoadElement(index);
+            return data.HasIndex(index) ? data[index] : throw new ArgumentException("Loader is not filtering out redundant loading!");
 
-            return future;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Rabbit.UI
 
             var expected = new[]
             {
+                0,
                 1,
                 2,
                 3,
@@ -30,7 +31,31 @@ namespace Rabbit.UI
                 9,
             };
 
-            list.AddRange(expected);
+            for (var i = 0; i < expected.Length; i++)
+            {
+                Assert.IsTrue(list.ElementAt(i).Reference == expected[i]);
+            }
+        }
+
+        [Test]
+        public void Is_Preloading_Working()
+        {
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoaderWithPreloading(), nodeCapacity: 2);
+            Assert.True(list != null);
+
+            var expected = new[]
+            {
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+            };
 
             for (var i = 0; i < expected.Length; i++)
             {
@@ -66,7 +91,7 @@ namespace Rabbit.UI
         [Test]
         public void Is_Loading_Good_With_Max_Count()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), nodeCapacity: 2, maxLoadedElementCount: 5);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), nodeCapacity: 2);
             Assert.True(list != null);
 
             var expected = new[]

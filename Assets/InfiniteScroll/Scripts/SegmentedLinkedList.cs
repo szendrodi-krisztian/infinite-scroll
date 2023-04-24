@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rabbit.UI
 {
     public sealed class SegmentedLinkedList<T> : SegmentedLinkedListBase<T, SegmentedLinkedList<T>>, ICollection<T>
     {
-        public int StartIndex => startIndex;
-        private SegmentedLinkedList<T> NextNode => nextNode;
-
         public IEnumerable<SegmentedLinkedList<T>> Segments
         {
             get
@@ -23,36 +21,25 @@ namespace Rabbit.UI
                 }
             }
         }
-        public T this[int i] => ElementAt(i);
+
+        public T this[int i]
+        {
+            get => ElementAt(i);
+            set => SetElementAt(i, value);
+        }
 
         public SegmentedLinkedList() : this(SegmentedLinkedListBase<T, SegmentedLinkedList<T>>.DefaultNodeCapacity) { }
         public SegmentedLinkedList(int nodeCapacity = SegmentedLinkedListBase<T, SegmentedLinkedList<T>>.DefaultNodeCapacity) => Init(nodeCapacity);
         public bool IsReadOnly => false;
 
         public void Add(T item) => AddLast(item);
-
-        public void Clear()
-        {
-            NextNode?.Clear();
-            nodeCount = 0;
-        }
-
-        public bool Contains(T item)
-        {
-            for (var i = 0; i < nodeCount; i++)
-            {
-                if (Equals(ElementAt(i), item))
-                {
-                    return true;
-                }
-            }
-
-            return nextNode?.Contains(item) == true;
-        }
+        public bool Contains(T item) => Enumerable.Contains(this, item);
 
         public IEnumerator<T> GetEnumerator()
         {
-            for (var i = 0; i < Count; i++)
+            var count = Count;
+
+            for (var i = 0; i < count; i++)
             {
                 yield return ElementAt(i);
             }
@@ -61,27 +48,7 @@ namespace Rabbit.UI
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public void CopyTo(T[] array, int arrayIndex) => array[arrayIndex] = ElementAt(arrayIndex);
-
         public void AddLast(T newElement) => SetElementAt(Count, newElement);
-
-        public void Insert(int index, T element)
-        {
-            if (IsIndexInPrevNode(index))
-            {
-                CreatePrevNodeIfNeeded();
-                prevNode.Insert(index, element);
-            }
-            else if (IsIndexInNextNode(index))
-            {
-                CreateNextNodeIfNeeded();
-                nextNode.Insert(index, element);
-            }
-            else
-            {
-                InsertAndShiftForward(index, element);
-            }
-        }
-
         public void AddRange(IEnumerable<T> elements)
         {
             if (!IsNodeFull)
@@ -95,6 +62,24 @@ namespace Rabbit.UI
             }
 
             NextNode.AddRange(elements);
+        }
+
+        public void Insert(int index, T element)
+        {
+            if (IsIndexInPrevNode(index))
+            {
+                CreatePrevNodeIfNeeded();
+                PrevNode.Insert(index, element);
+            }
+            else if (IsIndexInNextNode(index))
+            {
+                CreateNextNodeIfNeeded();
+                NextNode.Insert(index, element);
+            }
+            else
+            {
+                InsertAndShiftForward(index, element);
+            }
         }
     }
 }

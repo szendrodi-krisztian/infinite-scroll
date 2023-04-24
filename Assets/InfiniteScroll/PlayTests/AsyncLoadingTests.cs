@@ -12,7 +12,7 @@ namespace Rabbit.UI
         public IEnumerator AsyncLoadingTestsWithEnumeratorPasses()
         {
             var loader = new GameObject("Loader").AddComponent<MockAsyncSegmentLoader>();
-            var list = new InfiniteSegmentedLinkedList<string>(loader, nodeCapacity: 2, maxLoadedElementCount: 5);
+            var list = new InfiniteSegmentedLinkedList<string>(loader, nodeCapacity: 2);
             Assert.True(list != null);
 
             var expected = new[]
