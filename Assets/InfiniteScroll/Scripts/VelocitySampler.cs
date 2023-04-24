@@ -9,6 +9,7 @@ namespace Rabbit.UI
     {
         [SerializeField] private int count;
         [SerializeField] private AnimationCurve weight;
+
         private int index;
 
         private Sample[] samples;
