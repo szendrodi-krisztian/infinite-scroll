@@ -2,11 +2,11 @@
 
 namespace Rabbit.UI
 {
-    public class Future<T>
+    public sealed class Future<T>
     {
-        private T reference;
-        private bool isCompleted = false;
+        private bool isCompleted;
         private Action onComplete = delegate { };
+        private T reference;
 
         public T Reference => reference;
         public bool IsCompleted => isCompleted;

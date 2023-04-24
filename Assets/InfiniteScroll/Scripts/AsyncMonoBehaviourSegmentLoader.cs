@@ -7,28 +7,17 @@ namespace Rabbit.UI
 {
     public abstract class AsyncMonoBehaviourSegmentLoader<T> : MonoBehaviour, ISegmentLoader<T>
     {
-        private struct ElementLoadResult
-        {
-            public readonly int Index;
-            public readonly T Result;
+        private readonly Dictionary<int, Action<int, T>> indexMemoizeMap = new Dictionary<int, Action<int, T>>();
 
-            public ElementLoadResult(int index, T result)
-            {
-                Index = index;
-                Result = result;
-            }
-        }
-
-        private readonly Dictionary<int, Action<int, T>> indexMemoizeMap = new();
-
-        private readonly List<ElementLoadResult> loaded = new();
-
-        protected abstract void LoadOnThread(int idx);
+        private readonly List<ElementLoadResult> loaded = new List<ElementLoadResult>();
         protected abstract bool UseRealThread { get; }
+
+        public abstract int TotalCount { get; }
 
         public void LoadElement(int index, Action<int, T> onElementDone)
         {
             Monitor.Enter(this);
+
             {
                 if (indexMemoizeMap.ContainsKey(index))
                 {
@@ -37,6 +26,7 @@ namespace Rabbit.UI
                 else
                 {
                     indexMemoizeMap[index] = onElementDone;
+
                     if (UseRealThread)
                     {
                         ThreadPool.QueueUserWorkItem(LoadSegmentThreaded, index);
@@ -47,29 +37,33 @@ namespace Rabbit.UI
                     }
                 }
             }
+
             Monitor.Exit(this);
         }
 
-        public abstract int TotalCount { get; }
-
         protected virtual void Update()
         {
-            if (!Monitor.TryEnter(this)) return;
+            if (!Monitor.TryEnter(this))
+                return;
+
             {
                 foreach (var l in loaded)
                 {
-                    indexMemoizeMap[l.Index](l.Index, l.Result);
-                    indexMemoizeMap.Remove(l.Index);
+                    indexMemoizeMap[l.index](l.index, l.result);
+                    indexMemoizeMap.Remove(l.index);
                 }
 
                 loaded.Clear();
             }
+
             Monitor.Exit(this);
         }
 
+        protected abstract void LoadOnThread(int idx);
+
         private void LoadSegmentThreaded(object state)
         {
-            var idx = (int)state;
+            var idx = (int) state;
 
             LoadOnThread(idx);
         }
@@ -77,10 +71,24 @@ namespace Rabbit.UI
         protected void OnElementLoaded(int idx, T result)
         {
             Monitor.Enter(this);
+
             {
                 loaded.Add(new ElementLoadResult(idx, result));
             }
+
             Monitor.Exit(this);
+        }
+
+        private struct ElementLoadResult
+        {
+            public readonly int index;
+            public readonly T result;
+
+            public ElementLoadResult(int index, T result)
+            {
+                this.index = index;
+                this.result = result;
+            }
         }
     }
 }

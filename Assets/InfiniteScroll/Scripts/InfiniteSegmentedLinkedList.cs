@@ -1,22 +1,20 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public class InfiniteSegmentedLinkedList<T>
+    public sealed class InfiniteSegmentedLinkedList<T>
     {
         private const int DefaultMaxLoadedElementCount = 100;
 
-        private SegmentedLinkedList<T> data;
+        private readonly ISegmentLoader<T> loader;
         private readonly int maxLoadedElementCount;
         private readonly int nodeCapacity;
 
-        private readonly ISegmentLoader<T> loader;
+        private SegmentedLinkedList<T> data;
 
         public int Count => loader.TotalCount;
 
-        public InfiniteSegmentedLinkedList(ISegmentLoader<T> loader, int nodeCapacity = 10,
-            int maxLoadedElementCount = DefaultMaxLoadedElementCount)
+        public InfiniteSegmentedLinkedList(ISegmentLoader<T> loader, int nodeCapacity = 10, int maxLoadedElementCount = InfiniteSegmentedLinkedList<T>.DefaultMaxLoadedElementCount)
         {
             this.loader = loader;
             this.nodeCapacity = nodeCapacity;
@@ -27,6 +25,7 @@ namespace Rabbit.UI
         public void AddRange(IEnumerable<T> source)
         {
             data.AddRange(source);
+
             while (data.Count > maxLoadedElementCount && data.NextNode != null)
             {
                 data = data.NextNode;
@@ -40,7 +39,7 @@ namespace Rabbit.UI
 
             if (index < data.StartIndex)
             {
-                loader.LoadElement(index, (loadedIndex, loadedData) =>
+                loader.LoadElement(index, onElementDone: (loadedIndex, loadedData) =>
                 {
                     data.SetElementAt(loadedIndex, loadedData);
                     future.Complete(data.ElementAt(index));
@@ -48,7 +47,7 @@ namespace Rabbit.UI
             }
             else if (index > data.StartIndex + data.Count - 1)
             {
-                loader.LoadElement(index, (loadedIndex, loadedData) =>
+                loader.LoadElement(index, onElementDone: (loadedIndex, loadedData) =>
                 {
                     data.SetElementAt(loadedIndex, loadedData);
                     future.Complete(data.ElementAt(index));

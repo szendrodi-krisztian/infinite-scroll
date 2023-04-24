@@ -1,7 +1,4 @@
 namespace Rabbit.UI
 {
-    public class DemoStringScrollView : InfiniteScrollView<string>
-    {
-        
-    }
+    public sealed class DemoStringScrollView : InfiniteScrollView<string> { }
 }

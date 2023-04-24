@@ -1,37 +1,32 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Rabbit.UI.Rabbit.UI
+namespace Rabbit.UI
+
 {
     [Serializable]
     public sealed class VelocitySampler
     {
         [SerializeField] private int count;
         [SerializeField] private AnimationCurve weight;
+        private int index;
 
         private Sample[] samples;
-        private int index;
         private int validSampleCount;
 
-        private struct Sample
+        private static Sample[] Init(int count)
         {
-            public float time;
-            public float value;
-        }
-
-        public void Init()
-        {
-            samples = new Sample[count];
-            index = 0;
-            validSampleCount = 0;
+            var samples = new Sample[count];
+            return samples;
         }
 
         public void PushSample(float time, float value)
         {
-            if(samples == null) Init();
-            
+            samples ??= Init(count);
+
             index = TakeMod(index + 1, count);
-            samples[index] = new Sample { time = time, value = value };
+
+            samples[index] = new Sample(time, value);
 
             if (validSampleCount < count)
                 validSampleCount++;
@@ -39,14 +34,15 @@ namespace Rabbit.UI.Rabbit.UI
 
         public float GetSample()
         {
-            if(samples == null) Init();
-            
+            samples ??= Init(count);
+
             var mapped = index;
             var result = 0f;
+
             for (var i = 0; i < validSampleCount; i++)
             {
                 mapped = TakeMod(mapped - 1, count);
-                result += weight.Evaluate(Time.timeSinceLevelLoad - samples[mapped].time) * samples[mapped].value;
+                result += weight.Evaluate(Time.timeSinceLevelLoad - samples[mapped].Time) * samples[mapped].Value;
             }
 
             return result / validSampleCount;
@@ -56,9 +52,10 @@ namespace Rabbit.UI.Rabbit.UI
         {
             if (cnt == 0)
                 return index;
+
             if (index >= cnt)
             {
-                index -= (index / cnt) * cnt;
+                index -= index / cnt * cnt;
             }
             else if (index < 0)
             {
@@ -67,6 +64,18 @@ namespace Rabbit.UI.Rabbit.UI
             }
 
             return index;
+        }
+
+        private struct Sample
+        {
+            public Sample(float time, float value)
+            {
+                Time = time;
+                Value = value;
+            }
+
+            public float Time { get; }
+            public float Value { get; }
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using NUnit.Framework;
-using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public class InfiniteSegmentedLinkedListTests
+    public sealed class InfiniteSegmentedLinkedListTests
     {
         [Test]
         public void Can_Be_Created()
@@ -15,12 +14,20 @@ namespace Rabbit.UI
         [Test]
         public void Is_Add_Get_Good()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), 2);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), nodeCapacity: 2);
             Assert.True(list != null);
 
             var expected = new[]
             {
-                1, 2, 3, 4, 5, 6, 7, 8, 9
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
             };
 
             list.AddRange(expected);
@@ -34,12 +41,20 @@ namespace Rabbit.UI
         [Test]
         public void Is_Loading_Good()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), 2);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), nodeCapacity: 2);
             Assert.True(list != null);
 
             var expected = new[]
             {
-                0, 1, 2, 3, 4, 5, 6, 7, 8
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
             };
 
             for (var i = 0; i < expected.Length; i++)
@@ -51,12 +66,20 @@ namespace Rabbit.UI
         [Test]
         public void Is_Loading_Good_With_Max_Count()
         {
-            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), 2, 5);
+            var list = new InfiniteSegmentedLinkedList<int>(new MockSyncSegmentLoader(), nodeCapacity: 2, maxLoadedElementCount: 5);
             Assert.True(list != null);
 
             var expected = new[]
             {
-                0, 1, 2, 3, 4, 5, 6, 7, 8
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
             };
 
             for (var i = 0; i < expected.Length; i++)

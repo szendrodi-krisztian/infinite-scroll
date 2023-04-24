@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public class DemoStringElement : InfiniteScrollViewElement<string>
+    public sealed class DemoStringElement : InfiniteScrollViewElement<string>
     {
         [SerializeField] private TMP_Text label;
 
