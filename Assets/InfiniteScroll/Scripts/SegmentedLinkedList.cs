@@ -1,35 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public sealed class SegmentedLinkedList<T> : ICollection<T>
+    public sealed class SegmentedLinkedList<T> : SegmentedLinkedListBase<T, SegmentedLinkedList<T>>, ICollection<T>
     {
-        private const int DefaultNodeCapacity = 64;
-        private T[] data;
-
-        private SegmentedLinkedList<T> nextNode;
-
-        private int nodeCapacity;
-        private int nodeCount;
-        private SegmentedLinkedList<T> prevNode;
-
-        private int startIndex;
         public int StartIndex => startIndex;
-
-        public SegmentedLinkedList<T> NextNode
-        {
-            get => nextNode;
-            set => nextNode = value;
-        }
-
-        public SegmentedLinkedList<T> PrevNode
-        {
-            get => prevNode;
-            set => prevNode = value;
-        }
+        private SegmentedLinkedList<T> NextNode => nextNode;
 
         public IEnumerable<SegmentedLinkedList<T>> Segments
         {
@@ -37,34 +14,26 @@ namespace Rabbit.UI
             {
                 yield return this;
 
-                if (nextNode != null)
+                if (NextNode != null)
                 {
-                    foreach (var segment in nextNode.Segments)
+                    foreach (var segment in NextNode.Segments)
                     {
                         yield return segment;
                     }
                 }
             }
         }
-
         public T this[int i] => ElementAt(i);
 
-        public SegmentedLinkedList(int nodeCapacity = SegmentedLinkedList<T>.DefaultNodeCapacity, int startIndex = 0, SegmentedLinkedList<T> prevNode = null)
-        {
-            this.nodeCapacity = nodeCapacity;
-            nodeCount = 0;
-            data = new T[nodeCapacity];
-            this.startIndex = startIndex;
-            this.prevNode = prevNode;
-        }
-        public int Count => nodeCount + (nextNode?.Count ?? 0);
+        public SegmentedLinkedList() : this(SegmentedLinkedListBase<T, SegmentedLinkedList<T>>.DefaultNodeCapacity) { }
+        public SegmentedLinkedList(int nodeCapacity = SegmentedLinkedListBase<T, SegmentedLinkedList<T>>.DefaultNodeCapacity) => Init(nodeCapacity);
         public bool IsReadOnly => false;
 
         public void Add(T item) => AddLast(item);
 
         public void Clear()
         {
-            nextNode?.Clear();
+            NextNode?.Clear();
             nodeCount = 0;
         }
 
@@ -72,247 +41,60 @@ namespace Rabbit.UI
         {
             for (var i = 0; i < nodeCount; i++)
             {
-                if (Equals(data[i], item))
+                if (Equals(ElementAt(i), item))
                 {
                     return true;
                 }
             }
 
-            if (nextNode != null)
-                return nextNode.Contains(item);
-
-            return false;
-        }
-
-        public void CopyTo(T[] array, int arrayIndex) => array[arrayIndex] = ElementAt(arrayIndex);
-
-        public bool Remove(T item)
-        {
-            var nextRemoved = nextNode?.Remove(item) ?? false;
-
-            var countInThis = data.Count(x => Equals(x, item));
-
-            if (countInThis == 0)
-                return nextRemoved;
-
-            var reAllocated = new T[nodeCapacity - countInThis];
-
-            var j = 0;
-
-            for (var i = 0; i < nodeCount; i++)
-            {
-                if (Equals(data[i], item))
-                    continue;
-
-                reAllocated[j++] = data[i];
-            }
-
-            data = reAllocated;
-            nodeCapacity = reAllocated.Length;
-            nodeCount = nodeCount - countInThis;
-
-            SetStartIndex(startIndex);
-
-            return true;
+            return nextNode?.Contains(item) == true;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            for (var i = 0; i < nodeCount; i++)
+            for (var i = 0; i < Count; i++)
             {
-                yield return data[i];
-            }
-
-            if (nextNode != null)
-            {
-                foreach (var elem in nextNode)
-                {
-                    yield return elem;
-                }
+                yield return ElementAt(i);
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        public void CopyTo(T[] array, int arrayIndex) => array[arrayIndex] = ElementAt(arrayIndex);
+
+        public void AddLast(T newElement) => SetElementAt(Count, newElement);
+
         public void Insert(int index, T element)
         {
-            if (index < startIndex)
+            if (IsIndexInPrevNode(index))
             {
                 CreatePrevNodeIfNeeded();
                 prevNode.Insert(index, element);
             }
-            else if (index > startIndex + nodeCapacity - 1)
+            else if (IsIndexInNextNode(index))
             {
                 CreateNextNodeIfNeeded();
                 nextNode.Insert(index, element);
             }
             else
             {
-                if (nodeCount < nodeCapacity)
-                {
-                    var list = data.ToList();
-                    list.Insert(index - startIndex, element);
-                    data = list.ToArray();
-                }
-                else
-                {
-                    var list = data.ToList();
-                    list.Insert(index - startIndex, element);
-                    data = list.SkipLast(1).ToArray();
-
-                    if (nextNode == null)
-                    {
-                        AddToNextNode(list.Last());
-                    }
-                    else
-                    {
-                        nextNode.ShiftForward(list.Last());
-                    }
-                }
-            }
-        }
-
-        private void ShiftForward(T newFirst)
-        {
-            var list = data.ToList();
-            list.Insert(index: 0, newFirst);
-            data = list.SkipLast(1).ToArray();
-
-            if (nextNode == null)
-            {
-                AddToNextNode(list.Last());
-            }
-            else
-            {
-                nextNode.ShiftForward(list.Last());
+                InsertAndShiftForward(index, element);
             }
         }
 
         public void AddRange(IEnumerable<T> elements)
         {
-            if (nodeCount == nodeCapacity)
-            {
-                AddRange(elements);
-            }
-            else
+            if (!IsNodeFull)
             {
                 foreach (var e in elements)
                 {
                     AddLast(e);
                 }
-            }
-        }
 
-        public void AddLast(T newElement)
-        {
-            if (nodeCount == nodeCapacity)
-            {
-                AddToNextNode(newElement);
-            }
-            else
-            {
-                data[nodeCount++] = newElement;
-            }
-        }
-
-        private void AddToNextNode(T newElement)
-        {
-            CreateNextNodeIfNeeded();
-            nextNode.AddLast(newElement);
-        }
-
-        private void CreateNextNodeIfNeeded() => nextNode ??= new SegmentedLinkedList<T>(nodeCapacity, startIndex + nodeCapacity, this);
-
-        private void CreatePrevNodeIfNeeded()
-        {
-            if (prevNode == null)
-            {
-                prevNode = new SegmentedLinkedList<T>(nodeCapacity, startIndex - nodeCapacity);
-                prevNode.AppendList(this);
-            }
-        }
-
-        public T ElementAt(int index)
-        {
-            if (index >= startIndex + nodeCapacity)
-            {
-                CreateNextNodeIfNeeded();
-                return nextNode.ElementAt(index);
+                return;
             }
 
-            if (index < startIndex)
-            {
-                CreatePrevNodeIfNeeded();
-                return prevNode.ElementAt(index);
-            }
-
-            return data[index - startIndex];
-        }
-
-        public void RemoveAt(int index)
-        {
-            if (index >= nodeCapacity)
-                nextNode.RemoveAt(index - nodeCapacity);
-            else
-            {
-                var reallocatedData = new T[nodeCapacity - 1];
-
-                for (int oldIndex = 0, newIndex = 0; oldIndex < nodeCount; oldIndex++)
-                {
-                    if (oldIndex == index)
-                        continue;
-
-                    reallocatedData[newIndex] = data[oldIndex];
-
-                    newIndex++;
-                }
-
-                nodeCapacity = reallocatedData.Length;
-                data = reallocatedData;
-                nodeCount -= 1;
-
-                SetStartIndex(startIndex);
-            }
-        }
-
-        private void SetStartIndex(int newStartIndex)
-        {
-            startIndex = newStartIndex;
-            nextNode?.SetStartIndex(startIndex + nodeCapacity);
-        }
-
-        public void AppendList(SegmentedLinkedList<T> added)
-        {
-            if (nextNode == null)
-            {
-                nextNode = added;
-                added.prevNode = this;
-                SetStartIndex(startIndex);
-            }
-            else
-            {
-                nextNode.AppendList(added);
-            }
-        }
-
-        public void SetElementAt(int idx, T element)
-        {
-            if (idx > startIndex + nodeCapacity - 1)
-            {
-                CreateNextNodeIfNeeded();
-                nextNode.SetElementAt(idx, element);
-            }
-
-            else if (idx < startIndex)
-            {
-                CreatePrevNodeIfNeeded();
-                prevNode.SetElementAt(idx, element);
-            }
-            else
-            {
-                data[idx - startIndex] = element;
-                nodeCount = Mathf.Max(idx - startIndex + 1, nodeCount);
-            }
+            NextNode.AddRange(elements);
         }
     }
 }

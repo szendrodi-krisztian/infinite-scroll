@@ -10,7 +10,7 @@ namespace Rabbit.UI
         private readonly int maxLoadedElementCount;
         private readonly int nodeCapacity;
 
-        private SegmentedLinkedList<T> data;
+        private readonly SegmentedLinkedList<T> data;
 
         public int Count => loader.TotalCount;
 
@@ -22,16 +22,7 @@ namespace Rabbit.UI
             data = new SegmentedLinkedList<T>(nodeCapacity);
         }
 
-        public void AddRange(IEnumerable<T> source)
-        {
-            data.AddRange(source);
-
-            while (data.Count > maxLoadedElementCount && data.NextNode != null)
-            {
-                data = data.NextNode;
-                data.PrevNode = null;
-            }
-        }
+        public void AddRange(IEnumerable<T> source) => data.AddRange(source);
 
         public Future<T> ElementAt(int index)
         {

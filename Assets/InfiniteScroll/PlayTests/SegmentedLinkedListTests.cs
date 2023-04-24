@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace Rabbit.UI
 {
@@ -28,10 +30,16 @@ namespace Rabbit.UI
 
         private void AddSamples(SegmentedLinkedList<int> list)
         {
+            var sb = new StringBuilder();
+
             for (var i = 0; i < SegmentedLinkedListTestData.Samples.Length; i++)
             {
-                list.AddLast(SegmentedLinkedListTestData.Samples[i]);
+                var s = SegmentedLinkedListTestData.Samples[i];
+                sb.Append($"{s} ");
+                list.AddLast(s);
             }
+
+            Debug.Log(sb.ToString());
         }
 
         [Test]
@@ -51,7 +59,21 @@ namespace Rabbit.UI
             var list = new SegmentedLinkedList<int>(capacity);
             AddSamples(list);
 
+            Debug.Log($"removeindex: {removeIndex} capacity: {capacity}");
+
             list.RemoveAt(removeIndex);
+
+            var sb = new StringBuilder();
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                if (i == removeIndex)
+                    sb.Append("   ");
+
+                sb.Append($"{list.ElementAt(i)} ");
+            }
+
+            Debug.Log(sb.ToString());
 
             for (var i = 0; i < SegmentedLinkedListTestData.Samples.Length - 1; i++)
             {
