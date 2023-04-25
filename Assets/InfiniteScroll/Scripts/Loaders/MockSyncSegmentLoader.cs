@@ -12,7 +12,7 @@ namespace Rabbit.UI
         {
             foreach (var consumer in consumers.Where(t => t != null))
             {
-                consumer.ConsumeSegment(index, index);
+                consumer.OnSegmentLoadFinished(index, index);
             }
         }
 

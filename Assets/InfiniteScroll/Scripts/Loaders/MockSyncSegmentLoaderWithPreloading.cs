@@ -14,7 +14,7 @@ namespace Rabbit.UI
             {
                 for (var i = 0; i < 6; i++)
                 {
-                    consumer.ConsumeSegment(index + i, index + i);
+                    consumer.OnSegmentLoadFinished(index + i, index + i);
                 }
             }
         }

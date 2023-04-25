@@ -23,7 +23,7 @@ namespace Rabbit.UI
                 {
                     foreach (var consumer in consumers.Where(t => t != null))
                     {
-                        consumer.OnSegmentLoading(index);
+                        consumer.OnSegmentLoadStarted(index);
                     }
                 }
 
@@ -51,7 +51,7 @@ namespace Rabbit.UI
                 {
                     foreach (var consumer in consumers.Where(t => t != null))
                     {
-                        consumer.ConsumeSegment(l.index, l.result);
+                        consumer.OnSegmentLoadFinished(l.index, l.result);
                     }
                 }
 

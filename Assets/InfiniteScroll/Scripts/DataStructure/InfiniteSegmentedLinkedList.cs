@@ -19,7 +19,7 @@ namespace Rabbit.UI
             loader.AddConsumer(this);
         }
 
-        public void OnSegmentLoading(int index)
+        public void OnSegmentLoadStarted(int index)
         {
             if (!data.HasIndex(index))
             {
@@ -27,7 +27,7 @@ namespace Rabbit.UI
             }
         }
 
-        public void ConsumeSegment(int index, T nextLoadedElement)
+        public void OnSegmentLoadFinished(int index, T nextLoadedElement)
         {
             if (data.HasIndex(index))
             {
