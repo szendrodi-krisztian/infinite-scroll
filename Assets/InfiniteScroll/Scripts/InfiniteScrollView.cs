@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace Rabbit.UI
 {
     public class InfiniteScrollView<T> : MonoBehaviour, IInfiniteScrollView
     {
-        [SerializeField] private InfiniteScrollViewElement<T> elementPrefab;
         [SerializeField] private RectTransform listParent;
 
         // limits should follow declaration order:
@@ -16,11 +14,12 @@ namespace Rabbit.UI
         [SerializeField] private float bottomAppearLimit;
         [SerializeField] private float bottomDisappearLimit;
 
-        [SerializeField] private List<InfiniteScrollViewElement<T>> activeElements;
+        private readonly List<IInfiniteScrollViewElement> activeElements = new List<IInfiniteScrollViewElement>();
 
-        private InfiniteSegmentedLinkedList<T> data;
+        private InfiniteSegmentedLinkedList<T> backingData;
+        private IInfiniteListElementProvider listItemProvider;
 
-        private ObjectPool<InfiniteScrollViewElement<T>> pool;
+        public RectTransform ParentRect => listParent;
 
         public void ScrollBy(float delta)
         {
@@ -42,7 +41,7 @@ namespace Rabbit.UI
                 // top element goes outside
                 while (topElement.RectTransform.localPosition.y > topDisappearLimit)
                 {
-                    pool.Release(topElement);
+                    listItemProvider.Destroy(topElement);
                     activeElements.RemoveAt(0);
                     topElement = activeElements.FirstOrDefault();
                 }
@@ -50,9 +49,9 @@ namespace Rabbit.UI
                 // top element goes downward
                 while (topElement.RectTransform.localPosition.y < topAppearLimit && topElement.ElementIndex > 0)
                 {
-                    var newTopElement = pool.Get();
+                    var newTopElement = listItemProvider.Create();
                     newTopElement.ElementIndex = topElement.ElementIndex - 1;
-                    newTopElement.UpdateDisplay(data);
+                    newTopElement.UpdateDisplay(backingData);
                     newTopElement.RectTransform.localPosition = topElement.RectTransform.localPosition + new Vector3(x: 0, newTopElement.ElementHeight, z: 0);
                     activeElements.Insert(index: 0, newTopElement);
 
@@ -62,17 +61,17 @@ namespace Rabbit.UI
                 // bottom goes outside
                 while (bottomElement.RectTransform.localPosition.y < bottomDisappearLimit)
                 {
-                    pool.Release(bottomElement);
+                    listItemProvider.Destroy(bottomElement);
                     activeElements.RemoveAt(activeElements.Count - 1);
                     bottomElement = activeElements.LastOrDefault();
                 }
 
                 // bottom goes upwards
-                while (bottomElement.RectTransform.localPosition.y > bottomAppearLimit && bottomElement.ElementIndex < data.Count)
+                while (bottomElement.RectTransform.localPosition.y > bottomAppearLimit && bottomElement.ElementIndex < backingData.Count)
                 {
-                    var newBottomElement = pool.Get();
+                    var newBottomElement = listItemProvider.Create();
                     newBottomElement.ElementIndex = bottomElement.ElementIndex + 1;
-                    newBottomElement.UpdateDisplay(data);
+                    newBottomElement.UpdateDisplay(backingData);
                     newBottomElement.RectTransform.localPosition = bottomElement.RectTransform.localPosition - new Vector3(x: 0, newBottomElement.ElementHeight, z: 0);
                     activeElements.Add(newBottomElement);
                     bottomElement = newBottomElement;
@@ -84,25 +83,25 @@ namespace Rabbit.UI
 
         protected virtual void Awake()
         {
-            data = new InfiniteSegmentedLinkedList<T>(gameObject.GetComponent<ISegmentLoader<T>>());
-            pool = new ObjectPool<InfiniteScrollViewElement<T>>(createFunc: () => Instantiate(elementPrefab, listParent), actionOnGet: e => e.OnPoolGet(), actionOnRelease: e => e.OnPoolRelease(), actionOnDestroy: e => Destroy(e.gameObject), collectionCheck: true, defaultCapacity: 10, maxSize: 1000);
+            backingData = new InfiniteSegmentedLinkedList<T>(gameObject.GetComponent<ISegmentLoader<T>>());
+            listItemProvider = GetComponent<IInfiniteListElementProvider>();
 
             var size = listParent.rect.size.y;
 
-            var starterCount = size / elementPrefab.ElementHeight + 4;
+            var starterCount = size / listItemProvider.ElementHeight + 4;
 
             for (var i = 0; i < starterCount; i++)
             {
-                var nextElement = pool.Get();
+                var nextElement = listItemProvider.Create();
                 nextElement.ElementIndex = i;
-                nextElement.UpdateDisplay(data);
+                nextElement.UpdateDisplay(backingData);
                 activeElements.Add(nextElement);
             }
 
             AdjustPositionsForSize();
         }
 
-        private void Update() => AdjustPositionsForSize();
+        protected virtual void Update() => AdjustPositionsForSize();
 
         private void AdjustPositionsForSize()
         {

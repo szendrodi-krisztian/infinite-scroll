@@ -5,7 +5,7 @@ namespace Rabbit.UI
     public sealed class Future<T>
     {
         private bool isCompleted;
-        private Action onComplete = delegate { };
+        private Action<T> onComplete = delegate { };
         private T reference;
 
         public T Reference => reference;
@@ -15,13 +15,13 @@ namespace Rabbit.UI
         {
             reference = data;
             isCompleted = true;
-            onComplete();
+            onComplete(reference);
         }
 
-        public void WhenComplete(Action action)
+        public void WhenComplete(Action<T> action)
         {
             if (isCompleted)
-                action();
+                action(reference);
             else
                 onComplete = action;
         }

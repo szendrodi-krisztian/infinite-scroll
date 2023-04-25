@@ -10,6 +10,8 @@ namespace Rabbit.UI
 
         public int Count => loader.TotalCount;
 
+        public Future<T> this[int index] => ElementAt(index);
+
         public InfiniteSegmentedLinkedList(ISegmentLoader<T> loader, int nodeCapacity = 10)
         {
             this.loader = loader;

@@ -492,6 +492,7 @@ GameObject:
   - component: {fileID: 369807946}
   - component: {fileID: 369807947}
   - component: {fileID: 369807948}
+  - component: {fileID: 369807949}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -571,13 +572,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2067e100e2024367b48501f07d516e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elementPrefab: {fileID: 324475263}
   listParent: {fileID: 2068834433}
   topDisappearLimit: 600
   topAppearLimit: 300
   bottomAppearLimit: -1100
   bottomDisappearLimit: -1400
-  activeElements: []
 --- !u!114 &369807947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,6 +601,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c04bee17166b4e54b94487618ce12223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &369807949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369807941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0154ecb32a9e46f38851af56f5bff164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  elementPrefab: {fileID: 324475261}
 --- !u!1 &532996437
 GameObject:
   m_ObjectHideFlags: 0
