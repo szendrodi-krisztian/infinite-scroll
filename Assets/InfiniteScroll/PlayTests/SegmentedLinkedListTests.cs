@@ -1,6 +1,7 @@
 #undef SEGMENT_LOGS
 using System.Linq;
 using NUnit.Framework;
+using Rabbit.DataStructure;
 
 namespace Rabbit.UI
 {

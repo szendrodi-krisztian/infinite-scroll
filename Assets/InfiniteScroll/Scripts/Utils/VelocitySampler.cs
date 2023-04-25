@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Rabbit.UI
+namespace Rabbit.Utils
 
 {
     [Serializable]

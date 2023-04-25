@@ -1,6 +1,8 @@
 ﻿using System;
+using Rabbit.Loaders;
+using Rabbit.Utils;
 
-namespace Rabbit.UI
+namespace Rabbit.DataStructure
 {
     public sealed class InfiniteSegmentedLinkedList<T> : ISegmentConsumer<T>
     {

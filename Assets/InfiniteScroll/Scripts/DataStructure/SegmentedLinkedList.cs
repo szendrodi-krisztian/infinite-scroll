@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rabbit.UI
+namespace Rabbit.DataStructure
 {
     public sealed class SegmentedLinkedList<T> : SegmentedLinkedListBase<T, SegmentedLinkedList<T>>, ICollection<T>
     {

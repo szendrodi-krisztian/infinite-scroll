@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Rabbit.UI
+namespace Rabbit.DataStructure
 {
     public abstract class SegmentedLinkedListBase<T, TImpl> where TImpl : SegmentedLinkedListBase<T, TImpl>, new()
     {

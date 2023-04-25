@@ -1,7 +1,9 @@
-﻿using TMPro;
+﻿using Rabbit.DataStructure;
+using Rabbit.UI;
+using TMPro;
 using UnityEngine;
 
-namespace Rabbit.UI
+namespace Rabbit.Demo
 {
     public sealed class DemoStringElement : InfiniteScrollViewElement
     {

@@ -1,3 +1,4 @@
+using Rabbit.DataStructure;
 using UnityEngine;
 
 namespace Rabbit.UI

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Rabbit.UI
+namespace Rabbit.Loaders
 {
     public sealed class MockAsyncSegmentLoader : AsyncMonoBehaviourSegmentLoader<string>
     {

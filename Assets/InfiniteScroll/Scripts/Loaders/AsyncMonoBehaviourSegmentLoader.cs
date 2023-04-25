@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Rabbit.DataStructure;
 using UnityEngine;
 
-namespace Rabbit.UI
+namespace Rabbit.Loaders
 {
     public abstract class AsyncMonoBehaviourSegmentLoader<T> : MonoBehaviour, ISegmentLoader<T>
     {
@@ -12,7 +13,6 @@ namespace Rabbit.UI
         protected abstract bool UseRealThread { get; }
 
         public abstract int TotalCount { get; }
-        public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
         public void LoadElement(int index)
         {
@@ -60,6 +60,7 @@ namespace Rabbit.UI
 
             Monitor.Exit(this);
         }
+        public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
         protected abstract void LoadOnThread(int idx);
 

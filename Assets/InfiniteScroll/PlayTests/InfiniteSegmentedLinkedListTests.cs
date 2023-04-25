@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+using Rabbit.DataStructure;
+using Rabbit.Loaders;
 
 namespace Rabbit.UI
 {

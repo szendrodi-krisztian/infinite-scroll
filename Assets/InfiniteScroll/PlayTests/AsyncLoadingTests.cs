@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
+using Rabbit.DataStructure;
+using Rabbit.Loaders;
 using UnityEngine;
 using UnityEngine.TestTools;
 

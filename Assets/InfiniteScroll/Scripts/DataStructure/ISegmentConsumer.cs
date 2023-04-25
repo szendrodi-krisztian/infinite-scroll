@@ -1,4 +1,4 @@
-namespace Rabbit.UI
+namespace Rabbit.DataStructure
 {
     public interface ISegmentConsumer<in T>
     {

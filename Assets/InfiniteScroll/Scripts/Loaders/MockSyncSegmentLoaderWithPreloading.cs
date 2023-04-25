@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using Rabbit.DataStructure;
 
-namespace Rabbit.UI
+namespace Rabbit.Loaders
 {
     public sealed class MockSyncSegmentLoaderWithPreloading : ISegmentLoader<int>
     {

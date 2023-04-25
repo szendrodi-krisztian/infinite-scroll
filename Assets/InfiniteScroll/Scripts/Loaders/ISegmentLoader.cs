@@ -1,4 +1,6 @@
-﻿namespace Rabbit.UI
+﻿using Rabbit.DataStructure;
+
+namespace Rabbit.Loaders
 {
     public interface ISegmentLoader<out T>
     {

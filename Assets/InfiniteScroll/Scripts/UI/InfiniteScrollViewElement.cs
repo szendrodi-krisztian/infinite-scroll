@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Rabbit.DataStructure;
+using UnityEngine;
 
 namespace Rabbit.UI
 {
@@ -23,8 +24,8 @@ namespace Rabbit.UI
 
         public void MoveBy(float delta) => RectTransform.position += new Vector3(x: 0, delta, z: 0);
 
-        public abstract void UpdateDisplay<T>(InfiniteSegmentedLinkedList<T> data);
-
         protected virtual void Awake() => RectTransform = (RectTransform) transform;
+
+        public abstract void UpdateDisplay<T>(InfiniteSegmentedLinkedList<T> data);
     }
 }

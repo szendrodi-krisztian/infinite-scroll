@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rabbit.UI
+namespace Rabbit.Utils
 {
     public sealed class Future<T>
     {
