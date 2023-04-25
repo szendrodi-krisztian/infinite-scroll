@@ -17,15 +17,7 @@ namespace Rabbit.UI
             var list = new InfiniteSegmentedLinkedList<string>(loader, nodeCapacity: 2);
             Assert.True(list != null);
 
-            var expected = new[]
-
-            {
-                0, 1,
-                2, 3,
-                4, 5,
-                6, 7,
-                8,
-            };
+            var expected = new[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
             var futures = expected.Select(x => list.ElementAt(x)).ToArray();
 

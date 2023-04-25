@@ -34,7 +34,6 @@ namespace Rabbit.Loaders
                 else
                 {
                     LoadSegmentThreaded(index);
-
                 }
             }
 

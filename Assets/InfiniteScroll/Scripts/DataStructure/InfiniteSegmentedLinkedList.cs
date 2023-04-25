@@ -47,7 +47,6 @@ namespace Rabbit.DataStructure
 
             loader.LoadElement(index);
             return data.HasIndex(index) ? data[index] : throw new ArgumentException("Loader is not filtering out redundant loading!");
-
         }
     }
 }

@@ -81,7 +81,6 @@ namespace Rabbit.DataStructure
                 }
                 else
                 {
-
                     var reallocatedData = new T[nodeCapacity - 1];
 
                     for (int oldIndex = 0, newIndex = 0; oldIndex < nodeCount; oldIndex++)

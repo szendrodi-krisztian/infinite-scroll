@@ -9,14 +9,7 @@ namespace Rabbit.UI
 {
     public sealed class InfiniteSegmentedLinkedListTests
     {
-        private readonly int[] expectedListValues =
-        {
-            0, 1,
-            2, 3,
-            4, 5,
-            6, 7,
-            8, 9,
-        };
+        private readonly int[] expectedListValues = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
         [UnityTest]
         public IEnumerator List_Can_Be_Created()
@@ -67,14 +60,7 @@ namespace Rabbit.UI
             var list = CreateList<MockSyncSegmentLoader>(2);
             Assert.True(list != null);
 
-            var expected = new[]
-            {
-                0, 1,
-                2, 3,
-                4, 5,
-                6, 7,
-                8,
-            };
+            var expected = new[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
             for (var i = 0; i < expected.Length; i++)
             {
@@ -88,14 +74,7 @@ namespace Rabbit.UI
             var list = CreateList<MockSyncSegmentLoader>(2);
             Assert.True(list != null);
 
-            var expected = new[]
-            {
-                0, 1,
-                2, 3,
-                4, 5,
-                6, 7,
-                8,
-            };
+            var expected = new[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
             for (var i = 0; i < expected.Length; i++)
             {
