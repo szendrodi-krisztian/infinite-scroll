@@ -153,13 +153,7 @@ namespace Rabbit.UI
 
             var segments = list.Segments.Select(x => x.StartIndex).ToArray();
 
-            var expected = new[]
-            {
-                0,
-                5,
-                10,
-                15,
-            };
+            var expected = new[] {0, 5, 10, 15};
 
             for (var i = 0; i < segments.Length; i++)
             {
@@ -170,13 +164,7 @@ namespace Rabbit.UI
 
             segments = list.Segments.Select(x => x.StartIndex).ToArray();
 
-            expected = new[]
-            {
-                0,
-                4,
-                9,
-                14,
-            };
+            expected = new[] {0, 4, 9, 14};
 
             for (var i = 0; i < segments.Length; i++)
             {
@@ -196,13 +184,7 @@ namespace Rabbit.UI
 
             var segments = list.Segments.Select(x => x.StartIndex).ToArray();
 
-            var expected = new[]
-            {
-                0,
-                5,
-                10,
-                15,
-            };
+            var expected = new[] {0, 5, 10, 15};
 
             for (var i = 0; i < segments.Length; i++)
             {
@@ -213,13 +195,7 @@ namespace Rabbit.UI
 
             segments = list.Segments.Select(x => x.StartIndex).ToArray();
 
-            expected = new[]
-            {
-                0,
-                3,
-                8,
-                13,
-            };
+            expected = new[] {0, 3, 8, 13};
 
             for (var i = 0; i < segments.Length; i++)
             {
@@ -239,13 +215,7 @@ namespace Rabbit.UI
 
             var segments = list.Segments.Select(x => x.StartIndex).ToArray();
 
-            var expected = new[]
-            {
-                0,
-                5,
-                10,
-                15,
-            };
+            var expected = new[] {0, 5, 10, 15};
 
             for (var i = 0; i < segments.Length; i++)
             {
@@ -256,13 +226,7 @@ namespace Rabbit.UI
 
             segments = list.Segments.Select(x => x.StartIndex).ToArray();
 
-            expected = new[]
-            {
-                0,
-                4,
-                8,
-                13,
-            };
+            expected = new[] {0, 4, 8, 13};
 
             for (var i = 0; i < segments.Length; i++)
             {
@@ -275,13 +239,7 @@ namespace Rabbit.UI
         {
             var list = new SegmentedLinkedList<int>(2);
 
-            var expected = new[]
-            {
-                0,
-                5,
-                10,
-                15,
-            };
+            var expected = new[] {0, 5, 10, 15};
 
             list.AddRange(expected);
 
@@ -296,41 +254,19 @@ namespace Rabbit.UI
         {
             var list1 = new SegmentedLinkedList<int>(2);
 
-            var expected1 = new[]
-            {
-                0,
-                5,
-                10,
-                15,
-            };
+            var expected1 = new[] {0, 5, 10, 15};
 
             list1.AddRange(expected1);
 
             var list2 = new SegmentedLinkedList<int>(2);
 
-            var expected2 = new[]
-            {
-                1,
-                3,
-                8,
-                27,
-            };
+            var expected2 = new[] {1, 3, 8, 27};
 
             list2.AddRange(expected2);
 
             list1.AppendList(list2);
 
-            var expected = new[]
-            {
-                0,
-                5,
-                10,
-                15,
-                1,
-                3,
-                8,
-                27,
-            };
+            var expected = new[] {0, 5, 10, 15, 1, 3, 8, 27};
 
             for (var i = 0; i < list1.Count; i++)
             {
@@ -362,18 +298,7 @@ namespace Rabbit.UI
 
             var initial = new[]
             {
-                0,
-                5,
-                10,
-                15,
-                42,
-                206,
-                78,
-                54,
-                25,
-                988,
-                45,
-                72,
+                0, 5, 10, 15, 42, 206, 78, 54, 25, 988, 45, 72,
                 9,
             };
 

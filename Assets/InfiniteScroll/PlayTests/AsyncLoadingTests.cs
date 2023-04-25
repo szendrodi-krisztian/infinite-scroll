@@ -11,7 +11,7 @@ namespace Rabbit.UI
     public sealed class AsyncLoadingTests
     {
         [UnityTest]
-        public IEnumerator AsyncLoadingTestsWithEnumeratorPasses()
+        public IEnumerator Async_Loading_Gives_Expected_Result()
         {
             var loader = new GameObject("Loader").AddComponent<MockAsyncSegmentLoader>();
             var list = new InfiniteSegmentedLinkedList<string>(loader, nodeCapacity: 2);
@@ -20,14 +20,10 @@ namespace Rabbit.UI
             var expected = new[]
 
             {
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
+                0, 1,
+                2, 3,
+                4, 5,
+                6, 7,
                 8,
             };
 

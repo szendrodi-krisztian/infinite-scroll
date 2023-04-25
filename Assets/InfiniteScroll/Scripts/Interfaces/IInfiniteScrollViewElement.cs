@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public interface IInfiniteScrollViewElement
+    public interface IInfiniteScrollViewElement : IMonoBehaviour
     {
         float ElementHeight { get; }
         int ElementIndex { get; set; }

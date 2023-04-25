@@ -1,6 +1,6 @@
 namespace Rabbit.UI
 {
-    public interface IInfiniteListElementProvider
+    public interface IInfiniteListElementProvider : IMonoBehaviour
     {
         public float ElementHeight { get; }
         public IInfiniteScrollViewElement Create();

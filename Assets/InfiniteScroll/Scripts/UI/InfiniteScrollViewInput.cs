@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Rabbit.UI
 {
-    public sealed class InfiniteScrollViewInput : MonoBehaviour, IScrollHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
+    public sealed class InfiniteScrollViewInput : MonoBehaviour, IScrollHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IMonoBehaviour
     {
         [SerializeField] private VelocitySampler velocitySampler;
 
