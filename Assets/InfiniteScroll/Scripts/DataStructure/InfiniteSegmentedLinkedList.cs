@@ -7,12 +7,7 @@ namespace Rabbit.DataStructure
     public sealed class InfiniteSegmentedLinkedList<T> : ISegmentConsumer<T>
     {
         private readonly SegmentedLinkedList<Future<T>> data;
-
         private readonly ISegmentLoader<T> loader;
-
-        public int Count => loader.TotalCount;
-
-        public Future<T> this[int index] => ElementAt(index);
 
         public InfiniteSegmentedLinkedList(ISegmentLoader<T> loader, int nodeCapacity = 10)
         {
@@ -20,6 +15,8 @@ namespace Rabbit.DataStructure
             data = new SegmentedLinkedList<Future<T>>(nodeCapacity);
             loader.AddConsumer(this);
         }
+
+        public int Count => loader.TotalCount;
 
         public void OnSegmentLoadStarted(int index)
         {
@@ -41,6 +38,7 @@ namespace Rabbit.DataStructure
             future.Complete(nextLoadedElement);
             data[index] = future;
         }
+        public Future<T1> GetItem<T1>(int index) => ElementAt(index) as Future<T1>;
 
         public Future<T> ElementAt(int index)
         {

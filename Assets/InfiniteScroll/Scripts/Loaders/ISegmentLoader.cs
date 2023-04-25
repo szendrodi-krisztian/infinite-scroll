@@ -2,11 +2,14 @@
 
 namespace Rabbit.Loaders
 {
-    public interface ISegmentLoader<out T>
+    public interface ISegmentLoader
     {
         int TotalCount { get; }
+        void LoadElement(int index);
+    }
 
-        public void LoadElement(int index);
+    public interface ISegmentLoader<out T> : ISegmentLoader
+    {
         public void AddConsumer(ISegmentConsumer<T> consumer);
     }
 }

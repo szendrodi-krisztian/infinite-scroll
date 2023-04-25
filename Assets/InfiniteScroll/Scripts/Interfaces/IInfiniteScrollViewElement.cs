@@ -11,6 +11,6 @@ namespace Rabbit.UI
         void OnPoolGet();
         void OnPoolRelease();
         void MoveBy(float delta);
-        void UpdateDisplay<T>(InfiniteSegmentedLinkedList<T> data);
+        void UpdateDisplay(IDataSource data);
     }
 }

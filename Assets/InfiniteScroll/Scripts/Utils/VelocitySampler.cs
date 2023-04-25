@@ -21,13 +21,13 @@ namespace Rabbit.Utils
             return samples;
         }
 
-        public void PushSample(float time, float value)
+        public void PushSample(float value)
         {
             samples ??= Init(count);
 
             index = TakeMod(index + 1, count);
 
-            samples[index] = new Sample(time, value);
+            samples[index] = new Sample(Time.timeSinceLevelLoad, value);
 
             if (validSampleCount < count)
                 validSampleCount++;

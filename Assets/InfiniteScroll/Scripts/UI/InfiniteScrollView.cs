@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rabbit.DataStructure;
-using Rabbit.Loaders;
 using UnityEngine;
 
 namespace Rabbit.UI
 {
-    public class InfiniteScrollView<T> : MonoBehaviour, IInfiniteScrollView
+    public class InfiniteScrollView : MonoBehaviour, IInfiniteScrollView
     {
         [SerializeField] private RectTransform listParent;
 
@@ -17,9 +16,10 @@ namespace Rabbit.UI
         [SerializeField] private float bottomDisappearLimit;
 
         private readonly List<IInfiniteScrollViewElement> activeElements = new List<IInfiniteScrollViewElement>();
-
-        private InfiniteSegmentedLinkedList<T> backingData;
+        private IDataSource dataSource;
         private IInfiniteListElementProvider listItemProvider;
+
+        private Vector3 prevMouse;
 
         public RectTransform ParentRect => listParent;
 
@@ -53,7 +53,7 @@ namespace Rabbit.UI
                 {
                     var newTopElement = listItemProvider.Create();
                     newTopElement.ElementIndex = topElement.ElementIndex - 1;
-                    newTopElement.UpdateDisplay(backingData);
+                    newTopElement.UpdateDisplay(dataSource);
                     newTopElement.RectTransform.localPosition = topElement.RectTransform.localPosition + new Vector3(x: 0, newTopElement.ElementHeight, z: 0);
                     activeElements.Insert(index: 0, newTopElement);
 
@@ -69,11 +69,11 @@ namespace Rabbit.UI
                 }
 
                 // bottom goes upwards
-                while (bottomElement.RectTransform.localPosition.y > bottomAppearLimit && bottomElement.ElementIndex < backingData.Count)
+                while (bottomElement.RectTransform.localPosition.y > bottomAppearLimit && bottomElement.ElementIndex < dataSource.Count)
                 {
                     var newBottomElement = listItemProvider.Create();
                     newBottomElement.ElementIndex = bottomElement.ElementIndex + 1;
-                    newBottomElement.UpdateDisplay(backingData);
+                    newBottomElement.UpdateDisplay(dataSource);
                     newBottomElement.RectTransform.localPosition = bottomElement.RectTransform.localPosition - new Vector3(x: 0, newBottomElement.ElementHeight, z: 0);
                     activeElements.Add(newBottomElement);
                     bottomElement = newBottomElement;
@@ -85,8 +85,9 @@ namespace Rabbit.UI
 
         protected virtual void Awake()
         {
-            backingData = new InfiniteSegmentedLinkedList<T>(gameObject.GetComponent<ISegmentLoader<T>>());
             listItemProvider = GetComponent<IInfiniteListElementProvider>();
+            dataSource = GetComponent<IDataSource>();
+            dataSource.Initialize();
 
             var size = listParent.rect.size.y;
 
@@ -96,13 +97,12 @@ namespace Rabbit.UI
             {
                 var nextElement = listItemProvider.Create();
                 nextElement.ElementIndex = i;
-                nextElement.UpdateDisplay(backingData);
+                nextElement.UpdateDisplay(dataSource);
                 activeElements.Add(nextElement);
             }
 
             AdjustPositionsForSize();
         }
-
         protected virtual void Update() => AdjustPositionsForSize();
 
         private void AdjustPositionsForSize()
@@ -141,7 +141,6 @@ namespace Rabbit.UI
                 var bottomElement = activeElements.LastOrDefault();
 
                 var y = bottomElement.RectTransform.localPosition.y;
-                Debug.Log($"CLAMP: y:{y} delta: {delta} limit {listParent.rect.size.y}");
 
                 if (y + delta > -listParent.rect.size.y + bottomElement.ElementHeight)
                     return 0;

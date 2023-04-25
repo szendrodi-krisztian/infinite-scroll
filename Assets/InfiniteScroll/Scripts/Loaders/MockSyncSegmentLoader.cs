@@ -8,7 +8,6 @@ namespace Rabbit.Loaders
     {
         private readonly List<ISegmentConsumer<int>> consumers = new List<ISegmentConsumer<int>>();
         public int TotalCount => int.MaxValue;
-
         public void LoadElement(int index)
         {
             foreach (var consumer in consumers.Where(t => t != null))

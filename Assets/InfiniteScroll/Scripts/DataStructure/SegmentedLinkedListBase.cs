@@ -21,7 +21,11 @@ namespace Rabbit.DataStructure
         protected bool IsNodeFull => nodeCount == nodeCapacity;
         public int Count => nodeCount + (nextNode?.Count ?? 0);
         public int StartIndex => startIndex;
-
+        public T this[int index]
+        {
+            get => ElementAt(index);
+            set => SetElementAt(index, value);
+        }
         public bool HasIndex(int index)
         {
             if (IsIndexInPrevNode(index))

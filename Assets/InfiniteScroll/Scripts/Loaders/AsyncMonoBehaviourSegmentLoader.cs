@@ -40,6 +40,7 @@ namespace Rabbit.Loaders
 
             Monitor.Exit(this);
         }
+        public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
         protected virtual void Update()
         {
@@ -60,7 +61,6 @@ namespace Rabbit.Loaders
 
             Monitor.Exit(this);
         }
-        public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
         protected abstract void LoadOnThread(int idx);
 

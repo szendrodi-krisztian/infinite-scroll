@@ -12,11 +12,20 @@ namespace Rabbit.UI
 
         public float ElementHeight => elementPrefab.GetComponent<IInfiniteScrollViewElement>().ElementHeight;
 
-        public IInfiniteScrollViewElement Create() => pool.Get();
+        public IInfiniteScrollViewElement Create()
+        {
+            Initialize();
+            return pool.Get();
+        }
+
         public void Destroy(IInfiniteScrollViewElement element) => pool.Release(element);
 
-        private void Awake()
+        private void Awake() => Initialize();
+        private void Initialize()
         {
+            if (pool != null)
+                return;
+
             scrollViewCore = GetComponent<IInfiniteScrollView>();
             pool = new ObjectPool<IInfiniteScrollViewElement>(OnPoolCreate, OnPoolGet, OnPoolRelease, OnPoolDestroy, collectionCheck: true, defaultCapacity: 20);
         }

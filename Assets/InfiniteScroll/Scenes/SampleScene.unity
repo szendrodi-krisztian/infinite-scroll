@@ -489,10 +489,11 @@ GameObject:
   - component: {fileID: 369807942}
   - component: {fileID: 369807945}
   - component: {fileID: 369807944}
-  - component: {fileID: 369807946}
+  - component: {fileID: 369807950}
   - component: {fileID: 369807947}
   - component: {fileID: 369807948}
   - component: {fileID: 369807949}
+  - component: {fileID: 369807951}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -560,23 +561,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 369807941}
   m_CullTransparentMesh: 1
---- !u!114 &369807946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 369807941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2067e100e2024367b48501f07d516e38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listParent: {fileID: 2068834433}
-  topDisappearLimit: 600
-  topAppearLimit: 300
-  bottomAppearLimit: -1100
-  bottomDisappearLimit: -1400
 --- !u!114 &369807947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -601,6 +585,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c04bee17166b4e54b94487618ce12223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocitySampler:
+    count: 8
+    weight:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.65261143
+        inSlope: 0.0015983856
+        outSlope: 0.0015983856
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.99938613
+      - serializedVersion: 3
+        time: 0.8039524
+        value: 0.19528852
+        inSlope: -1.9806169
+        outSlope: -1.9806169
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.035678234
+        outWeight: 0.17240652
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -0.060599834
+        outSlope: -0.060599834
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 1
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
 --- !u!114 &369807949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,6 +633,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elementPrefab: {fileID: 324475261}
+--- !u!114 &369807950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369807941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9bd0b257f94e8f829e11dfc48ba514, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &369807951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369807941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec218a092a712b4f85f0bb86ac52fe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listParent: {fileID: 2068834433}
+  topDisappearLimit: 600
+  topAppearLimit: 300
+  bottomAppearLimit: -1100
+  bottomDisappearLimit: -1400
 --- !u!1 &532996437
 GameObject:
   m_ObjectHideFlags: 0

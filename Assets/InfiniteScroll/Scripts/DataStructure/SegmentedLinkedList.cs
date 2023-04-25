@@ -22,12 +22,6 @@ namespace Rabbit.DataStructure
             }
         }
 
-        public T this[int i]
-        {
-            get => ElementAt(i);
-            set => SetElementAt(i, value);
-        }
-
         public SegmentedLinkedList() : this(SegmentedLinkedListBase<T, SegmentedLinkedList<T>>.DefaultNodeCapacity) { }
         public SegmentedLinkedList(int nodeCapacity = SegmentedLinkedListBase<T, SegmentedLinkedList<T>>.DefaultNodeCapacity) => Init(nodeCapacity);
         public bool IsReadOnly => false;
