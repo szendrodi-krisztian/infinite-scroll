@@ -13,9 +13,9 @@ namespace Rabbit.Loaders
         {
             foreach (var consumer in consumers.Where(t => t != null))
             {
-                for (var i = 0; i < 6; i++)
+                for (var i = index; i < index + 6; i++)
                 {
-                    consumer.OnSegmentLoadFinished(index + i, index + i);
+                    consumer.OnSegmentLoadFinished(i, i);
                 }
             }
         }

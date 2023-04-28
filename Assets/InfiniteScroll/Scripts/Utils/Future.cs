@@ -23,7 +23,7 @@ namespace Rabbit.Utils
             if (isCompleted)
                 action(reference);
             else
-                onComplete = action;
+                onComplete += action;
         }
     }
 }

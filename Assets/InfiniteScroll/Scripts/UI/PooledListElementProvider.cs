@@ -32,7 +32,11 @@ namespace Rabbit.UI
 
         private static void OnPoolDestroy(IInfiniteScrollViewElement e) => Destroy(((MonoBehaviour) e).gameObject);
         private static void OnPoolRelease(IInfiniteScrollViewElement e) => e.OnPoolRelease();
-        private static void OnPoolGet(IInfiniteScrollViewElement e) => e.OnPoolGet();
+        private void OnPoolGet(IInfiniteScrollViewElement e)
+        {
+            e.Initialize(scrollViewCore);
+            e.OnPoolGet();
+        }
         private IInfiniteScrollViewElement OnPoolCreate() => Instantiate(elementPrefab, scrollViewCore.ParentRect).GetComponent<IInfiniteScrollViewElement>();
     }
 }

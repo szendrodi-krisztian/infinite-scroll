@@ -5,11 +5,12 @@ namespace Rabbit.Loaders
 {
     public sealed class MockAsyncSegmentLoaderWithPreloading : AsyncMonoBehaviourSegmentLoader<string>
     {
-        public static int ActualRequestCounter;
+        public int actualRequestCounter;
 
         private readonly Random random = new Random();
 
-        public override int TotalCount => 50;
+        protected override int PreLoadLength => 20;
+        public override int TotalCount => 100;
 
         protected override bool UseRealThread => true;
 
@@ -18,8 +19,10 @@ namespace Rabbit.Loaders
             var delay = random.Next(minValue: 100, maxValue: 300);
             Thread.Sleep(delay);
 
-            // TODO: call back to the tests how many times this happens.
-            // When requesting elements 1..100, it should only happen 5 times.
+            lock( this )
+            {
+                actualRequestCounter++;
+            }
 
             for (var i = idx; i < idx + 20; i++)
             {

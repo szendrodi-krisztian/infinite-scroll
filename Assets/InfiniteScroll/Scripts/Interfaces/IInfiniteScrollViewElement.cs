@@ -8,6 +8,7 @@ namespace Rabbit.UI
         float ElementHeight { get; }
         int ElementIndex { get; set; }
         RectTransform RectTransform { get; }
+        void Initialize(IInfiniteScrollView newScrollViewParent);
         void OnPoolGet();
         void OnPoolRelease();
         void MoveBy(float delta);

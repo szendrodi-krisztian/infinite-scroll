@@ -12,5 +12,6 @@ namespace Rabbit.Demo
         private void UpdateUI<T>(T element) => label.text = element.ToString();
 
         public override void UpdateDisplay(IDataSource data) => data.GetItem<string>(elementIndex).WhenComplete(UpdateUI);
+        public override void DisplayLoading() => label.text = "Loading....";
     }
 }

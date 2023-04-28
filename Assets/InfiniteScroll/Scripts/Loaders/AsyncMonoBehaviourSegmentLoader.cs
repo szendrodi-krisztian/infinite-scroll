@@ -11,6 +11,7 @@ namespace Rabbit.Loaders
         private readonly List<ISegmentConsumer<T>> consumers = new List<ISegmentConsumer<T>>();
         private readonly List<ElementLoadResult> loaded = new List<ElementLoadResult>();
         protected abstract bool UseRealThread { get; }
+        protected abstract int PreLoadLength { get; }
 
         public abstract int TotalCount { get; }
 
@@ -19,11 +20,11 @@ namespace Rabbit.Loaders
             Monitor.Enter(this);
 
             {
-                for (var i = 0; i < consumers.Count; i++)
+                for (var j = index; j < index + PreLoadLength; j++)
                 {
                     foreach (var consumer in consumers.Where(t => t != null))
                     {
-                        consumer.OnSegmentLoadStarted(index);
+                        consumer.OnSegmentLoadStarted(j);
                     }
                 }
 

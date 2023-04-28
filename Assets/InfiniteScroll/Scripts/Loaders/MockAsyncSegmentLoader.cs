@@ -7,7 +7,8 @@ namespace Rabbit.Loaders
     {
         private readonly Random random = new Random();
 
-        public override int TotalCount => 50;
+        protected override int PreLoadLength => 1;
+        public override int TotalCount => 500;
 
         protected override bool UseRealThread => true;
 

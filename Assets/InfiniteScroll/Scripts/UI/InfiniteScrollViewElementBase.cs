@@ -18,11 +18,17 @@ namespace Rabbit.UI
             set => elementIndex = value;
         }
 
-        public virtual void OnPoolGet() => gameObject.SetActive(true);
+        public void Initialize(IInfiniteScrollView newScrollViewParent) { }
+        public virtual void OnPoolGet()
+        {
+            gameObject.SetActive(true);
+            DisplayLoading();
+        }
 
         public virtual void OnPoolRelease() => gameObject.SetActive(false);
 
         public void MoveBy(float delta) => RectTransform.position += new Vector3(x: 0, delta, z: 0);
         public abstract void UpdateDisplay(IDataSource data);
+        public abstract void DisplayLoading();
     }
 }
