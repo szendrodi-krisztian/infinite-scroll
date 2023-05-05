@@ -10,6 +10,8 @@ namespace Rabbit.UI
         private ObjectPool<IInfiniteScrollViewElement> pool;
         private IInfiniteScrollView scrollViewCore;
 
+        private void Awake() => Initialize();
+
         public float ElementHeight => elementPrefab.GetComponent<IInfiniteScrollViewElement>().ElementHeight;
 
         public IInfiniteScrollViewElement Create()
@@ -20,14 +22,19 @@ namespace Rabbit.UI
 
         public void Destroy(IInfiniteScrollViewElement element) => pool.Release(element);
 
-        private void Awake() => Initialize();
+        public void Invalidate()
+        {
+            pool.Dispose();
+            pool = null;
+        }
+
         private void Initialize()
         {
             if (pool != null)
                 return;
 
             scrollViewCore = GetComponent<IInfiniteScrollView>();
-            pool = new ObjectPool<IInfiniteScrollViewElement>(OnPoolCreate, OnPoolGet, OnPoolRelease, OnPoolDestroy, collectionCheck: true, defaultCapacity: 20);
+            pool = new ObjectPool<IInfiniteScrollViewElement>(OnPoolCreate, OnPoolGet, OnPoolRelease, OnPoolDestroy, true, 20);
         }
 
         private static void OnPoolDestroy(IInfiniteScrollViewElement e) => Destroy(((MonoBehaviour) e).gameObject);

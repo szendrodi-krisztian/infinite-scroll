@@ -19,12 +19,22 @@ namespace Rabbit.UI
         private IDataSource dataSource;
         private IInfiniteListElementProvider listItemProvider;
 
-        private Vector3 prevMouse;
+        protected virtual void Awake()
+        {
+            listItemProvider = GetComponent<IInfiniteListElementProvider>();
+            dataSource = GetComponent<IDataSource>();
+            dataSource.Initialize();
+
+            InitStarterElements();
+        }
+        protected virtual void Update() => AdjustPositionsForSize();
 
         public RectTransform ParentRect => listParent;
 
         public void ScrollBy(float delta)
         {
+            if (dataSource == null) return;
+
             // subdivide dragDelta so only a single element can change its visibility in a single frame!
             const float maxStepSize = 10f;
 
@@ -54,8 +64,8 @@ namespace Rabbit.UI
                     var newTopElement = listItemProvider.Create();
                     newTopElement.ElementIndex = topElement.ElementIndex - 1;
                     newTopElement.UpdateDisplay(dataSource);
-                    newTopElement.RectTransform.localPosition = topElement.RectTransform.localPosition + new Vector3(x: 0, newTopElement.ElementHeight, z: 0);
-                    activeElements.Insert(index: 0, newTopElement);
+                    newTopElement.RectTransform.localPosition = topElement.RectTransform.localPosition + new Vector3(0, newTopElement.ElementHeight, 0);
+                    activeElements.Insert(0, newTopElement);
 
                     topElement = newTopElement;
                 }
@@ -74,7 +84,7 @@ namespace Rabbit.UI
                     var newBottomElement = listItemProvider.Create();
                     newBottomElement.ElementIndex = bottomElement.ElementIndex + 1;
                     newBottomElement.UpdateDisplay(dataSource);
-                    newBottomElement.RectTransform.localPosition = bottomElement.RectTransform.localPosition - new Vector3(x: 0, newBottomElement.ElementHeight, z: 0);
+                    newBottomElement.RectTransform.localPosition = bottomElement.RectTransform.localPosition - new Vector3(0, newBottomElement.ElementHeight, 0);
                     activeElements.Add(newBottomElement);
                     bottomElement = newBottomElement;
                 }
@@ -83,15 +93,17 @@ namespace Rabbit.UI
             AdjustPositionsForSize();
         }
 
-        protected virtual void Awake()
+        public void Invalidate()
         {
-            listItemProvider = GetComponent<IInfiniteListElementProvider>();
-            dataSource = GetComponent<IDataSource>();
-            dataSource.Initialize();
+            activeElements.Clear();
+            InitStarterElements();
+        }
 
+        private void InitStarterElements()
+        {
             var size = listParent.rect.size.y;
 
-            var starterCount = size / listItemProvider.ElementHeight + 4;
+            var starterCount = size / listItemProvider.ElementHeight + 10;
 
             for (var i = 0; i < starterCount; i++)
             {
@@ -103,7 +115,6 @@ namespace Rabbit.UI
 
             AdjustPositionsForSize();
         }
-        protected virtual void Update() => AdjustPositionsForSize();
 
         private void AdjustPositionsForSize()
         {
@@ -112,7 +123,7 @@ namespace Rabbit.UI
 
             for (var i = 0; i < activeElements.Count; i++)
             {
-                activeElements[i].RectTransform.localPosition = startPos + new Vector3(x: 0, -offset, z: 0);
+                activeElements[i].RectTransform.localPosition = startPos + new Vector3(0, -offset, 0);
                 offset += activeElements[i].ElementHeight;
             }
         }

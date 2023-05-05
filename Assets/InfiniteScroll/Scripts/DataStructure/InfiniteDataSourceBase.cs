@@ -15,7 +15,12 @@ namespace Rabbit.DataStructure
         public void Initialize()
         {
             segmentLoader = GetComponent<ISegmentLoader<T>>();
-            backingData = new InfiniteSegmentedLinkedList<T>(segmentLoader, nodeCapacity: 10);
+            backingData = new InfiniteSegmentedLinkedList<T>(segmentLoader);
+        }
+
+        public void Invalidate()
+        {
+            backingData = new InfiniteSegmentedLinkedList<T>(segmentLoader);
         }
     }
 }

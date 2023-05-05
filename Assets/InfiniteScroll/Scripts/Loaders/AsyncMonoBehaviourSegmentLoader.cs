@@ -10,8 +10,29 @@ namespace Rabbit.Loaders
     {
         private readonly List<ISegmentConsumer<T>> consumers = new List<ISegmentConsumer<T>>();
         private readonly List<ElementLoadResult> loaded = new List<ElementLoadResult>();
+
         protected abstract bool UseRealThread { get; }
         protected abstract int PreLoadLength { get; }
+
+        protected virtual void Update()
+        {
+            if (!Monitor.TryEnter(this))
+                return;
+
+            {
+                foreach (var l in loaded)
+                {
+                    foreach (var consumer in consumers.Where(t => t != null))
+                    {
+                        consumer.OnSegmentLoadFinished(l.index, l.result);
+                    }
+                }
+
+                loaded.Clear();
+            }
+
+            Monitor.Exit(this);
+        }
 
         public abstract int TotalCount { get; }
 
@@ -42,24 +63,8 @@ namespace Rabbit.Loaders
         }
         public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
-        protected virtual void Update()
+        public void Invalidate()
         {
-            if (!Monitor.TryEnter(this))
-                return;
-
-            {
-                foreach (var l in loaded)
-                {
-                    foreach (var consumer in consumers.Where(t => t != null))
-                    {
-                        consumer.OnSegmentLoadFinished(l.index, l.result);
-                    }
-                }
-
-                loaded.Clear();
-            }
-
-            Monitor.Exit(this);
         }
 
         protected abstract void LoadOnThread(int idx);

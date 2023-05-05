@@ -19,6 +19,11 @@ namespace Rabbit.Loaders
                 }
             }
         }
+
+        public void Invalidate()
+        {
+        }
+
         public void AddConsumer(ISegmentConsumer<int> consumer) => consumers.Add(consumer);
     }
 }

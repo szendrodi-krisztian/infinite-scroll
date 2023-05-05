@@ -2,7 +2,7 @@
 
 namespace Rabbit.Loaders
 {
-    public interface ISegmentLoader : IMonoBehaviour
+    public interface ISegmentLoader : IMonoBehaviour, IInvalidateable
     {
         int TotalCount { get; }
         void LoadElement(int index);

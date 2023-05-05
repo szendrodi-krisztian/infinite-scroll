@@ -1,7 +1,6 @@
 ﻿using System;
 using Rabbit.Loaders;
 using Rabbit.Utils;
-using UnityEngine;
 
 namespace Rabbit.DataStructure
 {
@@ -21,19 +20,14 @@ namespace Rabbit.DataStructure
 
         public void OnSegmentLoadStarted(int index)
         {
-            Debug.Log($"Segment load started [{index}]");
-
             if (!data.HasIndex(index))
             {
-                Debug.Log($"Creating future for additional loading segment [{index}]");
                 data[index] = new Future<T>();
             }
         }
 
         public void OnSegmentLoadFinished(int index, T nextLoadedElement)
         {
-            Debug.Log($"OnSegmentLoadFinished [{index}]");
-
             if (data.HasIndex(index))
             {
                 data[index].Complete(nextLoadedElement);
@@ -44,19 +38,20 @@ namespace Rabbit.DataStructure
             future.Complete(nextLoadedElement);
             data[index] = future;
         }
+
+        public void Invalidate()
+        {
+            data.Clear();
+        }
+
         public Future<T1> GetItem<T1>(int index) => ElementAt(index) as Future<T1>;
 
         public Future<T> ElementAt(int index)
         {
-            Debug.Log($"ElementAt({index})");
-
             if (data.HasIndex(index))
             {
-                Debug.Log($"ElementAt({index}) exists");
                 return data[index];
             }
-
-            Debug.Log($"ElementAt({index}) does not exists");
 
             loader.LoadElement(index);
             return data.HasIndex(index) ? data[index] : throw new ArgumentException("Loader is not filtering out redundant loading!");
