@@ -21,7 +21,10 @@ namespace Knife
         private float extraHeight;
         private bool isOpened;
 
-        protected override float ExtraHeight => extraHeight;
+        protected override float ExtraHeight
+        {
+            get => extraHeight;
+        }
 
         public void ToggleOpened()
         {
@@ -63,6 +66,9 @@ namespace Knife
             labels.PlayersPlayed.SetText(element.PlayersPlayed);
             labels.PlayersCompleted.SetText(element.PlayersCompleted);
             labels.PlayersFirstTry.SetText(element.PlayersFirstTry);
+            labels.Comment.SetText(element.Comment);
+            labels.WorldRecord.SetText(element.WorldRecord);
+            labels.BestFirst.SetText(element.BestFirstTry);
         }
         public override void UpdateDisplay(IDataSource data) => data.GetItem<Level>(elementIndex).WhenComplete(UpdateUI);
 
@@ -77,6 +83,9 @@ namespace Knife
             labels.PlayersPlayed.SetText("...");
             labels.PlayersCompleted.SetText("...");
             labels.PlayersFirstTry.SetText("...");
+            labels.Comment.SetText("...");
+            labels.WorldRecord.SetText("...");
+            labels.BestFirst.SetText("...");
         }
 
 #if UNITY_EDITOR
@@ -116,52 +125,82 @@ namespace Knife
         [SerializeField] private TMP_Text[] playersCompleted;
         [SerializeField] private TMP_Text[] playersFirstTry;
         [SerializeField] private TMP_Text[] createdOn;
+        [SerializeField] private TMP_Text[] comment;
+        [SerializeField] private TMP_Text[] worldRecord;
+        [SerializeField] private TMP_Text[] bestFirst;
+
+        public TMP_Text[] Comment
+        {
+            get => comment;
+            set => comment = value;
+        }
+
+        public TMP_Text[] WorldRecord
+        {
+            get => worldRecord;
+            set => worldRecord = value;
+        }
+
+        public TMP_Text[] BestFirst
+        {
+            get => bestFirst;
+            set => bestFirst = value;
+        }
 
         public TMP_Text[] Title
         {
             get => title;
             set => title = value;
         }
+
         public TMP_Text[] MyProgress
         {
             get => myProgress;
             set => myProgress = value;
         }
+
         public TMP_Text[] RunMode
         {
             get => runMode;
             set => runMode = value;
         }
+
         public TMP_Text[] Author
         {
             get => author;
             set => author = value;
         }
+
         public TMP_Text[] Votes
         {
             get => votes;
             set => votes = value;
         }
+
         public TMP_Text[] Rating
         {
             get => rating;
             set => rating = value;
         }
+
         public TMP_Text[] PlayersPlayed
         {
             get => playersPlayed;
             set => playersPlayed = value;
         }
+
         public TMP_Text[] PlayersCompleted
         {
             get => playersCompleted;
             set => playersCompleted = value;
         }
+
         public TMP_Text[] PlayersFirstTry
         {
             get => playersFirstTry;
             set => playersFirstTry = value;
         }
+
         public TMP_Text[] CreatedOn
         {
             get => createdOn;

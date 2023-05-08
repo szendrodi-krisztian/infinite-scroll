@@ -34,6 +34,9 @@ namespace Knife
         [SerializeField] private string progress;
         [SerializeField] private string thumbnail;
 
+        public string BestFirstTry => $"{firstTryRecordScore} ({firstTryHolderName})";
+        public string WorldRecord => $"{recordScore} ({recordHolder})";
+        public string Comment => comment;
         public string Title => title;
         public string MyProgress => "?";
         public string RunMode => runMode == 1 ? "+" : "-";
