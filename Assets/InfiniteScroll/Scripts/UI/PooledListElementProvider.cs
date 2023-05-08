@@ -24,8 +24,6 @@ namespace Rabbit.UI
 
         public void Invalidate()
         {
-            pool.Dispose();
-            pool = null;
         }
 
         private void Initialize()

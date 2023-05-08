@@ -98,7 +98,13 @@ namespace Rabbit.UI
 
         public void Invalidate()
         {
+            foreach (var a in activeElements)
+            {
+                listItemProvider.Destroy(a);
+            }
+
             activeElements.Clear();
+
             InitStarterElements();
         }
 
@@ -107,7 +113,6 @@ namespace Rabbit.UI
             var size = listParent.rect.size.y;
 
             var starterCount = size / listItemProvider.ElementHeight + 10;
-
             for (var i = 0; i < starterCount; i++)
             {
                 var nextElement = listItemProvider.Create();

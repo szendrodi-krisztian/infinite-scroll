@@ -11,7 +11,7 @@ namespace Knife
     {
         [SerializeField] private InfiniteScrollView dataSource;
 
-        private readonly Dictionary<string, Filter> filters = new Dictionary<string, Filter>();
+        private readonly Dictionary<string, Filter> filters = new();
         private Sorter currentSorter;
 
         private int totalCount;
@@ -31,8 +31,6 @@ namespace Knife
                 {
                     invalidateable.Invalidate();
                 }
-
-                dataSource.Invalidate();
             }
         }
 
@@ -58,14 +56,13 @@ namespace Knife
         {
             const string url = "https://eu.knifeto.com:8001/getUserLevels";
             var postData = JsonUtility.ToJson(query);
-            Debug.Log(postData);
             var webRequest = UnityWebRequest.Post(url, postData);
 
             yield return webRequest.SendWebRequest();
 
-            Debug.Log(webRequest.downloadHandler.text);
-
             var page = JsonUtility.FromJson<LevelPage>(webRequest.downloadHandler.text);
+
+            webRequest.Dispose();
 
             totalCount = page.TotalCount;
 
