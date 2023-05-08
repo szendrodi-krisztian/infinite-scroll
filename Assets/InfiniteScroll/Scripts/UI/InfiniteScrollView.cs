@@ -15,7 +15,7 @@ namespace Rabbit.UI
         [SerializeField] private float bottomAppearLimit;
         [SerializeField] private float bottomDisappearLimit;
 
-        private readonly List<IInfiniteScrollViewElement> activeElements = new List<IInfiniteScrollViewElement>();
+        private readonly List<IInfiniteScrollViewElement> activeElements = new();
         private IDataSource dataSource;
         private IInfiniteListElementProvider listItemProvider;
 
@@ -27,6 +27,7 @@ namespace Rabbit.UI
 
             InitStarterElements();
         }
+
         protected virtual void Update() => AdjustPositionsForSize();
 
         public RectTransform ParentRect => listParent;
@@ -34,11 +35,13 @@ namespace Rabbit.UI
         public void ScrollBy(float delta)
         {
             if (dataSource == null) return;
+            if (Mathf.Abs(delta) <= 0.1f) return;
 
             // subdivide dragDelta so only a single element can change its visibility in a single frame!
             const float maxStepSize = 10f;
 
             var dragDelta = ClampDragDelta(delta);
+            if (Mathf.Abs(dragDelta) <= 0.01f) return;
 
             var stepCount = Mathf.CeilToInt(Mathf.Abs(dragDelta / maxStepSize));
             var stepSize = dragDelta / stepCount;
@@ -48,7 +51,7 @@ namespace Rabbit.UI
                 var topElement = activeElements.FirstOrDefault();
                 var bottomElement = activeElements.LastOrDefault();
 
-                MoveAllElementsBy(stepSize);
+                MoveAllElementsBy(ClampDragDelta(stepSize));
 
                 // top element goes outside
                 while (topElement.RectTransform.localPosition.y > topDisappearLimit)
@@ -118,9 +121,30 @@ namespace Rabbit.UI
 
         private void AdjustPositionsForSize()
         {
-            var offset = 0f;
-            var startPos = activeElements.First().RectTransform.localPosition;
+            var first = activeElements.First();
+            var startPos = first.RectTransform.localPosition;
+            if (first.ElementIndex == 0 && startPos.y < 0)
+            {
+                startPos.y = 0;
+            }
 
+            UpdateAllRectPositionWithFirstAt(startPos);
+
+            var last = activeElements.Last();
+            if (last.ElementIndex == dataSource.Count)
+            {
+                var y = last.RectTransform.localPosition.y;
+                var a = -listParent.rect.size.y + last.ElementHeight;
+                if (y > a)
+                {
+                    var overScroll = y - a;
+                    UpdateAllRectPositionWithFirstAt(startPos - new Vector3(0, overScroll, 0));
+                }
+            }
+        }
+        private void UpdateAllRectPositionWithFirstAt(Vector3 startPos)
+        {
+            var offset = 0f;
             for (var i = 0; i < activeElements.Count; i++)
             {
                 activeElements[i].RectTransform.localPosition = startPos + new Vector3(0, -offset, 0);
