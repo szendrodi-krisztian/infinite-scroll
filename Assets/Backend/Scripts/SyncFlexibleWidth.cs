@@ -18,6 +18,8 @@ namespace Knife
 
             foreach (var d in dst)
             {
+                if (d == null) continue;
+
                 if (Math.Abs(d.flexibleWidth - src.flexibleWidth) > 0.00001f)
                 {
                     if (PrefabUtility.IsAnyPrefabInstanceRoot(d.gameObject))

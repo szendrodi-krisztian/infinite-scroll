@@ -1,19 +1,54 @@
 using System;
 using System.Linq;
+using DG.Tweening;
 using Rabbit.DataStructure;
 using Rabbit.UI;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Knife
 {
     public sealed class CustomLevelDisplayElement : InfiniteScrollViewElementBase
     {
+        private static CustomLevelDisplayElement openedElement;
+
         [SerializeField] private LevelDisplayLabels labels;
+        [SerializeField] private LayoutElement openingPart;
+        [SerializeField] private float openedHeight = 340;
+
+        private float extraHeight;
+        private bool isOpened;
+
+        protected override float ExtraHeight => extraHeight;
+
+        public void ToggleOpened()
+        {
+            // if another one is opened, toggle that first
+            if (CustomLevelDisplayElement.openedElement != null && CustomLevelDisplayElement.openedElement != this)
+            {
+                CustomLevelDisplayElement.openedElement.ToggleOpened();
+            }
+
+            isOpened = !isOpened;
+
+            CustomLevelDisplayElement.openedElement = isOpened ? this : null;
+
+            this.DOKill();
+            openingPart.DOMinSize(new Vector2(0, isOpened ? openedHeight : 0f), 0.15f).SetUpdate(true).SetEase(Ease.OutQuart).SetTarget(this).OnUpdate(() =>
+            {
+                extraHeight = openingPart.minHeight;
+            });
+        }
 
         private void UpdateUI(Level element)
         {
+            if (isOpened)
+            {
+                openingPart.minHeight = 0;
+            }
+
             labels.Title.SetText($"{ElementIndex + 1} {element.Title}");
             labels.MyProgress.SetText(element.MyProgress);
             labels.RunMode.SetText(element.RunMode);
@@ -24,7 +59,6 @@ namespace Knife
             labels.PlayersCompleted.SetText(element.PlayersCompleted);
             labels.PlayersFirstTry.SetText(element.PlayersFirstTry);
         }
-
         public override void UpdateDisplay(IDataSource data) => data.GetItem<Level>(elementIndex).WhenComplete(UpdateUI);
 
         public override void DisplayLoading()

@@ -8,9 +8,11 @@ namespace Rabbit.UI
         [SerializeField] protected float elementHeight;
         [SerializeField] protected int elementIndex;
 
+        protected abstract float ExtraHeight { get; }
+
         public RectTransform RectTransform => transform as RectTransform;
 
-        public float ElementHeight => Mathf.Max(elementHeight, b: 1);
+        public float ElementHeight => Mathf.Max(elementHeight + ExtraHeight, 1);
 
         public int ElementIndex
         {
@@ -27,7 +29,7 @@ namespace Rabbit.UI
 
         public virtual void OnPoolRelease() => gameObject.SetActive(false);
 
-        public void MoveBy(float delta) => RectTransform.position += new Vector3(x: 0, delta, z: 0);
+        public void MoveBy(float delta) => RectTransform.position += new Vector3(0, delta, 0);
         public abstract void UpdateDisplay(IDataSource data);
         public abstract void DisplayLoading();
     }
