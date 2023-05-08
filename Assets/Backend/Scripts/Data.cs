@@ -81,8 +81,8 @@ namespace Knife
     {
         private const string QueryBase = "SELECT * FROM knife_dev.user_created_level_data WHERE {0} ORDER BY {1};";
 
-        [SerializeField] private List<Filter> filters = new List<Filter>();
-        [SerializeField] private List<Sorter> sorters = new List<Sorter>();
+        [SerializeField] private List<Filter> filters = new();
+        [SerializeField] private List<Sorter> sorters = new();
 
         public Filter Where(string propertyName)
         {
@@ -127,7 +127,7 @@ namespace Knife
         [SerializeField] private string orderingProperty;
         [SerializeField] private string action;
 
-        private LevelQuery query;
+        [NonSerialized] private LevelQuery query;
 
         public Sorter(LevelQuery query, string newOrderingProperty)
         {

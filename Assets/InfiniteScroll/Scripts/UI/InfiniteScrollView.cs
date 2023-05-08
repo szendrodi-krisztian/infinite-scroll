@@ -35,10 +35,10 @@ namespace Rabbit.UI
         public void ScrollBy(float delta)
         {
             if (dataSource == null) return;
-            if (Mathf.Abs(delta) <= 0.1f) return;
+            if (Mathf.Abs(delta) <= 0.02f) return;
 
             // subdivide dragDelta so only a single element can change its visibility in a single frame!
-            const float maxStepSize = 10f;
+            const float maxStepSize = 80f;
 
             var dragDelta = ClampDragDelta(delta);
             if (Mathf.Abs(dragDelta) <= 0.01f) return;

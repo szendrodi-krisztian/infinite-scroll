@@ -34,11 +34,15 @@ namespace Knife
             isOpened = !isOpened;
 
             CustomLevelDisplayElement.openedElement = isOpened ? this : null;
+            if (isOpened) openingPart.gameObject.SetActive(true);
 
             this.DOKill();
             openingPart.DOMinSize(new Vector2(0, isOpened ? openedHeight : 0f), 0.15f).SetUpdate(true).SetEase(Ease.OutQuart).SetTarget(this).OnUpdate(() =>
             {
                 extraHeight = openingPart.minHeight;
+            }).OnComplete(() =>
+            {
+                openingPart.gameObject.SetActive(openingPart.minHeight > 1);
             });
         }
 
@@ -47,6 +51,7 @@ namespace Knife
             if (isOpened)
             {
                 openingPart.minHeight = 0;
+                extraHeight = 0;
             }
 
             labels.Title.SetText($"{ElementIndex + 1} {element.Title}");

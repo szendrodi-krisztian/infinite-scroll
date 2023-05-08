@@ -768,6 +768,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: progress
+      objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
       propertyPath: filter.a
@@ -1113,6 +1118,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: author
+      objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
       propertyPath: filter.a
@@ -1443,6 +1453,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: firstTryRate
+      objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
       propertyPath: filter.a
@@ -1697,6 +1712,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: rateCount
+      objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.action
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
@@ -2037,6 +2062,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: completionRate
       objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
@@ -2593,6 +2623,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: playerCount
+      objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
       propertyPath: filter.a
@@ -2847,6 +2882,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: rating
       objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
@@ -3197,6 +3237,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 829767505186438445, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
+        type: 3}
+      propertyPath: filter.a
+      value: creationDate
       objectReference: {fileID: 0}
     - target: {fileID: 1410050573140627838, guid: 5d4bf47ca83ebea4c8bcb700d55fcf61,
         type: 3}
