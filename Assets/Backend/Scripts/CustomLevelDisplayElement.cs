@@ -15,15 +15,25 @@ namespace Knife
         private static CustomLevelDisplayElement openedElement;
 
         [SerializeField] private LevelDisplayLabels labels;
+        [SerializeField] private RawImage thumbnailImage;
         [SerializeField] private LayoutElement openingPart;
         [SerializeField] private float openedHeight = 340;
+
+        private Texture2D decodedThumbnail;
 
         private float extraHeight;
         private bool isOpened;
 
-        protected override float ExtraHeight
+        protected override float ExtraHeight => extraHeight;
+
+        private void Awake()
         {
-            get => extraHeight;
+            decodedThumbnail = new Texture2D(160 * 2, 90 * 2, TextureFormat.RGB24, 0, false);
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(decodedThumbnail);
         }
 
         public void ToggleOpened()
@@ -69,7 +79,11 @@ namespace Knife
             labels.Comment.SetText(element.Comment);
             labels.WorldRecord.SetText(element.WorldRecord);
             labels.BestFirst.SetText(element.BestFirstTry);
+
+            decodedThumbnail.LoadImage(Convert.FromBase64String(element.Thumbnail));
+            thumbnailImage.texture = decodedThumbnail;
         }
+
         public override void UpdateDisplay(IDataSource data) => data.GetItem<Level>(elementIndex).WhenComplete(UpdateUI);
 
         public override void DisplayLoading()

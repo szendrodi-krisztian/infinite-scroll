@@ -83,6 +83,7 @@ MonoBehaviour:
     - {fileID: 8323940847176854931}
     bestFirst:
     - {fileID: 8323940846530950431}
+  thumbnailImage: {fileID: 5775402086042930747}
   openingPart: {fileID: 2470380350675900141}
   openedHeight: 340
 --- !u!114 &2470380352002677516
@@ -188,6 +189,11 @@ PrefabInstance:
       propertyPath: m_FlexibleWidth
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2811091599642144631, guid: bfec277146ae6314297ed1035775a919,
+        type: 3}
+      propertyPath: m_PreferredWidth
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 2811091599836888258, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
       propertyPath: m_text
@@ -256,7 +262,12 @@ PrefabInstance:
     - target: {fileID: 2811091600295722170, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
       propertyPath: m_FlexibleWidth
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811091600295722170, guid: bfec277146ae6314297ed1035775a919,
+        type: 3}
+      propertyPath: m_PreferredWidth
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2811091600401014618, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
@@ -541,17 +552,17 @@ PrefabInstance:
     - target: {fileID: 2811091601399063049, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
       propertyPath: m_MinWidth
-      value: 300
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 2811091601399063049, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
       propertyPath: m_FlexibleWidth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2811091601399063049, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
       propertyPath: m_PreferredWidth
-      value: 300
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 4111005401759288972, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
@@ -562,6 +573,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: Favourite
+      objectReference: {fileID: 0}
+    - target: {fileID: 6169581925913812172, guid: bfec277146ae6314297ed1035775a919,
+        type: 3}
+      propertyPath: m_ChildForceExpandWidth
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8561089061428975888, guid: bfec277146ae6314297ed1035775a919,
         type: 3}
@@ -905,6 +921,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5775402086042930747 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6155810070086794628, guid: bfec277146ae6314297ed1035775a919,
+    type: 3}
+  m_PrefabInstance: {fileID: 381553890231333823}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &8323940846530950431 stripped

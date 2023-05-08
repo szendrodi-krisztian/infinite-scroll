@@ -148,6 +148,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4775964143384091125}
     m_Modifications:
+    - target: {fileID: 3966624417249143089, guid: dcd7cff0de67c9840a4813ef95dff18a,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3966624417249143090, guid: dcd7cff0de67c9840a4813ef95dff18a,
         type: 3}
       propertyPath: m_Name
