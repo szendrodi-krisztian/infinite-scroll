@@ -8,8 +8,8 @@ namespace Rabbit.Loaders
 {
     public abstract class AsyncMonoBehaviourSegmentLoader<T> : MonoBehaviour, ISegmentLoader<T>
     {
-        private readonly List<ISegmentConsumer<T>> consumers = new List<ISegmentConsumer<T>>();
-        private readonly List<ElementLoadResult> loaded = new List<ElementLoadResult>();
+        private readonly List<ISegmentConsumer<T>> consumers = new();
+        private readonly List<ElementLoadResult> loaded = new();
 
         protected abstract bool UseRealThread { get; }
         protected abstract int PreLoadLength { get; }
@@ -63,8 +63,13 @@ namespace Rabbit.Loaders
         }
         public void AddConsumer(ISegmentConsumer<T> consumer) => consumers.Add(consumer);
 
+        public void RemoveConsumer(ISegmentConsumer<T> consumer) => consumers.Remove(consumer);
+
         public void Invalidate()
         {
+            StopAllCoroutines();
+            loaded.Clear();
+            consumers.Clear();
         }
 
         protected abstract void LoadOnThread(int idx);

@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Knife
 {
@@ -9,57 +8,79 @@ namespace Knife
         [SerializeField] private CustomLevelsFiltering filtering;
         [SerializeField] private CustomSorterGroup group;
 
-        [SerializeField] private TwoStateEvent onNoOrder;
-        [SerializeField] private TwoStateEvent onOrderAsc;
-        [SerializeField] private TwoStateEvent onOrderDesc;
+        [SerializeField] private SorterState state;
+        [SerializeField] private Sorter ascending;
+        [SerializeField] private Sorter descending;
 
-        private TwoStateEvent currentState;
+        [SerializeField] private GameObject iconAscending;
+        [SerializeField] private GameObject iconDescending;
 
         private void Awake()
         {
+            if (group != null)
+            {
+                group.Add(this);
+            }
+
             ClearState();
         }
 
         public void ClearState()
         {
-            currentState?.OnDisabled.Invoke();
+            state = SorterState.None;
+            UpdateUI();
+        }
 
-            onNoOrder.NextState = onOrderAsc;
-            onOrderAsc.NextState = onOrderDesc;
-            onOrderDesc.NextState = onNoOrder;
-
-            currentState = onNoOrder;
-            currentState.OnEnabled.Invoke();
+        private void UpdateUI()
+        {
+            switch (state)
+            {
+                case SorterState.None:
+                    iconAscending.SetActive(false);
+                    iconDescending.SetActive(false);
+                    filtering.AddSorter(null);
+                    break;
+                case SorterState.Ascending:
+                    iconAscending.SetActive(true);
+                    iconDescending.SetActive(false);
+                    filtering.AddSorter(ascending);
+                    break;
+                case SorterState.Descending:
+                    iconAscending.SetActive(false);
+                    iconDescending.SetActive(true);
+                    filtering.AddSorter(descending);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void OnClick()
         {
             group.ResetAllExcept(this);
-            currentState.OnDisabled.Invoke();
-            currentState = currentState.NextState;
-            currentState.OnEnabled.Invoke();
-
-            filtering.AddSorter(currentState.Sorter);
+            state = state.Next();
+            UpdateUI();
         }
     }
 
-    [Serializable]
-    public class TwoStateEvent
+    public enum SorterState
     {
-        [SerializeField] private Sorter sorter;
-        [SerializeField] private UnityEvent onEnabled;
-        [SerializeField] private UnityEvent onDisabled;
+        None,
+        Ascending,
+        Descending,
+    }
 
-        private TwoStateEvent nextState;
-
-        public TwoStateEvent NextState
+    public static class SorterStateExt
+    {
+        public static SorterState Next(this SorterState state)
         {
-            get => nextState;
-            set => nextState = value;
+            return state switch
+            {
+                SorterState.None => SorterState.Ascending,
+                SorterState.Ascending => SorterState.Descending,
+                SorterState.Descending => SorterState.None,
+                _ => throw new ArgumentOutOfRangeException(nameof(state), state, null),
+            };
         }
-
-        public Sorter Sorter => sorter;
-        public UnityEvent OnEnabled => onEnabled;
-        public UnityEvent OnDisabled => onDisabled;
     }
 }

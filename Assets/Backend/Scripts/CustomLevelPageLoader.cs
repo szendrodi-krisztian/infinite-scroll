@@ -1,15 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Rabbit.Loaders;
 using Rabbit.UI;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace Knife
 {
     public class CustomLevelPageLoader : AsyncMonoBehaviourSegmentLoader<Level>
     {
-        [SerializeField] private InfiniteScrollView dataSource;
+        [SerializeField] private InfiniteScrollView scrollView;
 
         private readonly Dictionary<string, Filter> filters = new();
         private Sorter currentSorter;
@@ -23,15 +25,29 @@ namespace Knife
 
         private void LateUpdate()
         {
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+
             if (updateNextFrame)
             {
                 updateNextFrame = false;
 
-                foreach (var invalidateable in dataSource.GetComponents<IInvalidateable>())
+                foreach (var invalidateable in scrollView.GetComponents<IInvalidateable>())
                 {
                     invalidateable.Invalidate();
                 }
+
+                StartCoroutine(WaitOneFrame(() => { scrollView.Initialize(); }));
             }
+        }
+
+        private IEnumerator WaitOneFrame(Action a)
+        {
+            yield return null;
+
+            a();
         }
 
         public void AddFilter(Filter filter)

@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a99af2c99ac4a6a8fdaa8b5c8c2b848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataSource: {fileID: 6512680394244133710}
+  scrollView: {fileID: 6512680394244133710}
 --- !u!114 &6512680394244133709
 MonoBehaviour:
   m_ObjectHideFlags: 0

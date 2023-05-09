@@ -23,9 +23,7 @@ namespace Rabbit.UI
         {
             listItemProvider = GetComponent<IInfiniteListElementProvider>();
             dataSource = GetComponent<IDataSource>();
-            dataSource.Initialize();
-
-            InitStarterElements();
+            Initialize();
         }
 
         protected virtual void Update() => AdjustPositionsForSize();
@@ -104,7 +102,11 @@ namespace Rabbit.UI
             }
 
             activeElements.Clear();
+        }
 
+        public void Initialize()
+        {
+            dataSource.Initialize();
             InitStarterElements();
         }
 
@@ -126,6 +128,8 @@ namespace Rabbit.UI
 
         private void AdjustPositionsForSize()
         {
+            if (activeElements.Count == 0) return;
+
             var first = activeElements.First();
             var startPos = first.RectTransform.localPosition;
             if (first.ElementIndex == 0 && startPos.y < 0)

@@ -42,6 +42,7 @@ namespace Rabbit.DataStructure
         public void Invalidate()
         {
             data.Clear();
+            loader.RemoveConsumer(this);
         }
 
         public Future<T1> GetItem<T1>(int index) => ElementAt(index) as Future<T1>;

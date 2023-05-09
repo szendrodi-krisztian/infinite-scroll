@@ -20,7 +20,7 @@ namespace Rabbit.DataStructure
 
         public void Invalidate()
         {
-            backingData = new InfiniteSegmentedLinkedList<T>(segmentLoader);
+            backingData = null;
         }
     }
 }

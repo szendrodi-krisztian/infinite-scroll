@@ -7,7 +7,7 @@ namespace Rabbit.Loaders
 {
     public sealed class MockSyncSegmentLoader : MonoBehaviour, ISegmentLoader<int>
     {
-        private readonly List<ISegmentConsumer<int>> consumers = new List<ISegmentConsumer<int>>();
+        private readonly List<ISegmentConsumer<int>> consumers = new();
         public int TotalCount => int.MaxValue;
 
         public void LoadElement(int index)
@@ -23,5 +23,6 @@ namespace Rabbit.Loaders
         }
 
         public void AddConsumer(ISegmentConsumer<int> consumer) => consumers.Add(consumer);
+        public void RemoveConsumer(ISegmentConsumer<int> consumer) => consumers.Remove(consumer);
     }
 }
